@@ -24,4 +24,5 @@ public class StaffSessionBean implements StaffSessionBeanLocal {
     public void createNewStaff(Staff s) {
         em.persist(s);
     }
+        
 }
