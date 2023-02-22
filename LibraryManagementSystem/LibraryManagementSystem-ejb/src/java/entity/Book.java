@@ -36,16 +36,15 @@ public class Book implements Serializable {
     @Column
     private String author;
     
-    @OneToMany(mappedBy="customer")
+    @OneToMany(mappedBy="book")
     private List<LendAndReturn> lendAndReturns;
     
     public Book() {
         this.lendAndReturns = new ArrayList<>();
     }
 
-    public Book(Long bookId, String title, String isbn, String author) {
+    public Book(String title, String isbn, String author) {
         this();
-        this.bookId = bookId;
         this.title = title;
         this.isbn = isbn;
         this.author = author;
