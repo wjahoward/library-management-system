@@ -64,7 +64,7 @@ public class DataInitialization {
     
     private void initializeData() {
         Staff s1 = new Staff("Eric", "Some", "eric", "password");
-        Staff s2 = new Staff("Eric", "Some", "eric", "password");
+        Staff s2 = new Staff("Sarah", "Brightman", "sarah", "password");
         
         staffSessionBean.createNewStaff(s1);
         staffSessionBean.createNewStaff(s2);

@@ -22,14 +22,13 @@
 
                     <h:panelGrid columns="2" cellpadding="5">
                         <h:outputLabel for="username" value="Username:" />
-                        <p:inputText id="username" value="#{userLoginView.username}" required="true" label="username" />
+                        <p:inputText id="username" value="#{staffManagedBean.username}" required="true" label="username" />
 
                         <h:outputLabel for="password" value="Password:" />
-                        <p:password id="password" value="#{userLoginView.password}" required="true" label="password" />
+                        <p:password id="password" value="#{staffManagedBean.password}" required="true" label="password" />
 
                         <f:facet name="footer">
-                            <p:commandButton class="login-button" value="Login" update="growl" action="#{userLoginView.login}"
-                                             oncomplete="handleLoginRequest(xhr, status, args)" />
+                            <p:commandButton class="login-button" value="Login" update="growl" action="#{staffManagedBean.login}" />
                         </f:facet>  
                     </h:panelGrid>
                 </div>

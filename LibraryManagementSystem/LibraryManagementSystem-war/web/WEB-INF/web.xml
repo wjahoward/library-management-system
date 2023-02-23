@@ -8,6 +8,14 @@
         <param-name>primefaces.FONT_AWESOME</param-name>
         <param-value>true</param-value>
     </context-param>
+    <filter>
+        <filter-name>AuthenticatedFilter</filter-name>
+        <filter-class>filter.AuthenticatedFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthenticatedFilter</filter-name>
+        <url-pattern>/secret/*</url-pattern>
+    </filter-mapping>
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>

@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Staff;
+import exception.StaffNotFoundException;
 import javax.ejb.Local;
 
 /**
@@ -15,4 +16,6 @@ import javax.ejb.Local;
 @Local
 public interface StaffSessionBeanLocal {
     public void createNewStaff(Staff s);
+    
+    public Staff checkStaff(String username, String password) throws StaffNotFoundException;
 }
