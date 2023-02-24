@@ -10,7 +10,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <h:outputStylesheet name="css/default.css"/>
         <h:outputStylesheet name="css/cssLayout.css"/>
-        <title>Test Template</title>
+        <title>Home</title>
     </h:head>
 
     <h:body>
@@ -18,13 +18,18 @@
         <h:form>  
             <p:growl id="messages"/>
 
-            <p:menubar>
+            <p:menubar style="height: 30px;">
                 <p:menuitem value="Home" url="http://www.primefaces.org" icon="fa fa-user"/>
+                <p:submenu label="Books" icon="fa fa-book">
+                    <p:menuitem value="View Books" url="#"/>
+                    <p:menuitem value="Rent Books" url="#"/>
+                </p:submenu>
                 <p:menuitem value="Profile" url="http://www.primefaces.org" icon="fa fa-power-off"/>
-
                 <f:facet name="options">
-                    <p:inputText style="margin:1px 10px 1px 1px;" placeholder="Search"/>
-                    <p:commandButton type="submit" value="Logout" icon="fa fa-power-off" action="#{staffManagedBean.logout}"/>
+                    <div style="display: flex; align-items: center; margin-top: -7px">
+                        <p style="margin-right: 1em;">Welcome back, #{staffManagedBean.username}!</p>
+                        <p:commandButton type="submit" value="Logout" icon="fa fa-power-off" action="#{staffManagedBean.logout}"/>
+                    </div>
                 </f:facet>
             </p:menubar>
         </h:form>
