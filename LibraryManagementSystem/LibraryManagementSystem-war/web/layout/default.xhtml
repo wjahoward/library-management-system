@@ -20,14 +20,14 @@
             <p:growl id="messages"/>
 
             <p:menubar style="height: 30px;">
-                <p:menuitem value="Home" url="http://www.primefaces.org" icon="fa fa-home"/>
+                <p:menuitem value="Home" url="/LibraryManagementSystem-war/secret/index.xhtml" icon="fa fa-home"/>
                 <p:submenu label="Books" icon="fa fa-book">
                     <p:menuitem value="View Books" url="#"/>
                     <p:menuitem value="Lend Book" url="#"/>
                 </p:submenu>
                 <p:submenu label="Members" icon="fa fa-user">
-                    <p:menuitem value="View Members" url="#"/>
-                    <p:menuitem value="Register Member" url="./member/createMember.xhtml"/>
+                    <p:menuitem value="View Members" url="/LibraryManagementSystem-war/secret/member/searchMember.xhtml"/>
+                    <p:menuitem value="Register Member" url="/LibraryManagementSystem-war/secret/member/createMember.xhtml"/>
                 </p:submenu>
                 <p:menuitem value="Profile" url="http://www.primefaces.org" icon="fa fa-power-off"/>
                 <f:facet name="options">
