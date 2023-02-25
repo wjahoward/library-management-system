@@ -6,9 +6,11 @@
 package ejb.session.stateless;
 
 import entity.Member;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -23,6 +25,12 @@ public class MemberSessionBean implements MemberSessionBeanLocal {
     @Override
     public void createNewMember(Member m) {
         em.persist(m);
+    }
+    
+    @Override
+    public List<Member> searchMembers() {
+        Query query = em.createQuery("SELECT m FROM Member m");
+        return query.getResultList();
     }
 
 }

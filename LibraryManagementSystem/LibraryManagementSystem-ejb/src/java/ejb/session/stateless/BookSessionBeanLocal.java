@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Book;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -15,4 +16,6 @@ import javax.ejb.Local;
 @Local
 public interface BookSessionBeanLocal {
     public void createNewBook(Book b);
+    
+    public List<Book> searchBooks();
 }

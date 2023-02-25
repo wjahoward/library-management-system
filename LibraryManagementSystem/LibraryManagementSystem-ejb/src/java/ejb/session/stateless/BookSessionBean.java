@@ -6,9 +6,11 @@
 package ejb.session.stateless;
 
 import entity.Book;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -25,5 +27,11 @@ public class BookSessionBean implements BookSessionBeanLocal {
     @Override
     public void createNewBook(Book b) {
         em.persist(b);
+    }
+    
+    @Override
+    public List<Book> searchBooks() {
+        Query query = em.createQuery("SELECT b FROM Book b");
+        return query.getResultList();
     }
 }

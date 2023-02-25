@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Member;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -15,4 +16,6 @@ import javax.ejb.Local;
 @Local
 public interface MemberSessionBeanLocal {
     public void createNewMember(Member m);
+    
+    public List<Member> searchMembers();
 }

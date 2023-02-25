@@ -7,6 +7,8 @@ package managedbean;
 
 import ejb.session.stateless.MemberSessionBeanLocal;
 import entity.Member;
+import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
@@ -30,11 +32,18 @@ public class MemberManagedBean {
     private String identityNo;
     private String phone;
     private String address;
+    
+    private List<Member> members;
 
     /**
      * Creates a new instance of MemberManagedBean
      */
     public MemberManagedBean() {
+    }
+    
+    @PostConstruct
+    public void init() {
+        setMembers(memberSessionBeanLocal.searchMembers());
     }
     
     public void addMember(ActionEvent evt) {
@@ -113,4 +122,13 @@ public class MemberManagedBean {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    public List<Member> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<Member> members) {
+        this.members = members;
+    }
+    
 }
