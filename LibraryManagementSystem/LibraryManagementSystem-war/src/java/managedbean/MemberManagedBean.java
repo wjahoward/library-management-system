@@ -35,6 +35,8 @@ public class MemberManagedBean {
     
     private List<Member> members;
     private Member selectedMember;
+    
+    private long input;
 
     /**
      * Creates a new instance of MemberManagedBean
@@ -58,6 +60,10 @@ public class MemberManagedBean {
         m.setAddress(address);
         
         memberSessionBeanLocal.createNewMember(m);
+    }
+    
+    public void updatedSelectedMember() {
+        input = selectedMember.getMemberId();
     }
 
     public MemberSessionBeanLocal getMemberSessionBeanLocal() {
@@ -139,5 +145,14 @@ public class MemberManagedBean {
     public void setSelectedMember(Member selectedMember) {
         this.selectedMember = selectedMember;
     }
+
+    public long getInput() {
+        return input;
+    }
+
+    public void setInput(long input) {
+        this.input = input;
+    }
+    
     
 }

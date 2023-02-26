@@ -25,35 +25,44 @@ import javax.faces.event.ActionEvent;
 @Named(value = "lendAndReturnManagedBean")
 @RequestScoped
 public class LendAndReturnManagedBean {
-    
+
     @EJB
     private LendAndReturnSessionBeanLocal lendAndReturnSessionBeanLocal;
-    
-    private Member selectedMember;
-//    private Long bId;
+
+    private Long bId;
     private Date lendDate;
     private Date returnDate;
     private BigDecimal fineAmount;
+
+    private Book selectedBook;
+    private Member selectedMember;
 
     /**
      * Creates a new instance of LendAndReturnManagedBean
      */
     public LendAndReturnManagedBean() {
     }
-    
-    public void addLendAndReturn(ActionEvent evt) {
-        
+
+    public void addLendAndReturn() {
+
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
-//        Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
+        Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
         Long mId = Long.parseLong(externalContext.getRequestParameterMap().get("mId"));
-                
+
         LendAndReturn lAR = new LendAndReturn();
         lAR.setLendDate(new Date());
         lAR.setReturnDate(null);
         lAR.setFineAmount(new BigDecimal(0));
-          
-        lendAndReturnSessionBeanLocal.createLendAndReturn(lAR, 1L, mId);
+
+        lendAndReturnSessionBeanLocal.createLendAndReturn(lAR, bId, mId);
+    }
+
+    public void updatedSelectedBook() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = context.getExternalContext();
+        Long bookId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));        
+        setbId(bookId);
     }
 
     public LendAndReturnSessionBeanLocal getLendAndReturnSessionBeanLocal() {
@@ -87,8 +96,6 @@ public class LendAndReturnManagedBean {
     public void setFineAmount(BigDecimal fineAmount) {
         this.fineAmount = fineAmount;
     }
-    
-    
 
 //    public Member getMember() {
 //        return member;
@@ -105,15 +112,21 @@ public class LendAndReturnManagedBean {
 //    public void setBook(Book book) {
 //        this.book = book;
 //    }
+    public Long getbId() {
+        return bId;
+    }
 
-//    public Long getbId() {
-//        return bId;
-//    }
-//
-//    public void setbId(Long bId) {
-//        this.bId = bId;
-//    }
-//    
+    public void setbId(Long bId) {
+        this.bId = bId;
+    }
+//        
+    public Book getSelectedBook() {
+        return selectedBook;
+    }
+
+    public void setSelectedBook(Book selectedBook) {
+        this.selectedBook = selectedBook;
+    }
 
     public Member getSelectedMember() {
         return selectedMember;
@@ -122,6 +135,4 @@ public class LendAndReturnManagedBean {
     public void setSelectedMember(Member selectedMember) {
         this.selectedMember = selectedMember;
     }
-    
-    
 }

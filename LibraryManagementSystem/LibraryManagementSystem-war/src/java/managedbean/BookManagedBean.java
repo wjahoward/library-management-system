@@ -59,10 +59,6 @@ public class BookManagedBean {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unable to load book")); 
         } 
     } 
-    
-    public void updatedSelectedBook() {
-        setSelectedBook(selectedBook);
-    }
 
     public BookSessionBeanLocal getBookSessionBeanLocal() {
         return bookSessionBeanLocal;
