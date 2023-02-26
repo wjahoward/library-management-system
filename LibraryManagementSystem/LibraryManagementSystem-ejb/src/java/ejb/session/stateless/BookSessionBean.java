@@ -34,4 +34,11 @@ public class BookSessionBean implements BookSessionBeanLocal {
         Query query = em.createQuery("SELECT b FROM Book b");
         return query.getResultList();
     }
+    
+    @Override
+    public Book getBook(long bId) {
+        Query query = em.createQuery("SELECT b FROM Book b WHERE b.bookId = :inBId");
+        query.setParameter("inBId", bId);
+        return (Book) query.getSingleResult();
+    }
 }

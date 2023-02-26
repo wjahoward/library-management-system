@@ -18,4 +18,6 @@ public interface BookSessionBeanLocal {
     public void createNewBook(Book b);
     
     public List<Book> searchBooks();
+    
+    public Book getBook(long bId);
 }

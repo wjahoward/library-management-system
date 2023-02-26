@@ -34,6 +34,7 @@ public class MemberManagedBean {
     private String address;
     
     private List<Member> members;
+    private Member selectedMember;
 
     /**
      * Creates a new instance of MemberManagedBean
@@ -129,6 +130,14 @@ public class MemberManagedBean {
 
     public void setMembers(List<Member> members) {
         this.members = members;
+    }
+
+    public Member getSelectedMember() {
+        return selectedMember;
+    }
+
+    public void setSelectedMember(Member selectedMember) {
+        this.selectedMember = selectedMember;
     }
     
 }

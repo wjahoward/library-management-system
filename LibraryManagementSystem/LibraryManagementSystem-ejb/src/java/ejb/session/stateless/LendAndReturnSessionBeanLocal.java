@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.LendAndReturn;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +14,5 @@ import javax.ejb.Local;
  */
 @Local
 public interface LendAndReturnSessionBeanLocal {
-    
+    public void createLendAndReturn(LendAndReturn lAR, Long bId, Long mId);
 }
