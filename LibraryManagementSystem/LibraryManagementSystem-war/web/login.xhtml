@@ -5,36 +5,34 @@
                 template="./layout/login.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:b="http://bootsfaces.net/ui">
 
     <h:head>
         <title>Centered Container Example</title>
     </h:head>
 
     <ui:define name="content">
-        <div class="login-container">
+        <h:body style="padding-top: 60px; background-color: #dddddd;">
 
-            <h:form>
+            <b:container style="margin-top: 15em;">
+                <h:form styleClass="form-signin" prependId="false">
+                    <h2 class="form-signin-heading" style="text-align:center">Library Management System</h2>
+                    <b:inputText id="email" placeholder="Username" value="#{staffManagedBean.username}" required="true">
+                        <f:facet name="prepend">
+                            <b:icon name="user" />
+                        </f:facet>
+                    </b:inputText>
+                    <b:inputText id="password" placeholder="Password" type="password" value="#{staffManagedBean.password}" required="true">
+                        <f:facet name="prepend">
+                            <b:iconAwesome name="key" />
+                        </f:facet>
+                    </b:inputText>
+                    <b:commandButton look="primary btn-block" value="Sign In" icon="log-in" size="lg" action="#{staffManagedBean.login}"/>
+                </h:form>
+            </b:container>
+        </h:body>
 
-                <div class="form-container">
-
-                    <p:growl id="growl" sticky="true" showDetail="true" life="3000" />
-
-                    <h:panelGrid columns="2" cellpadding="5">
-                        <h:outputLabel for="username" value="Username:" />
-                        <p:inputText id="username" value="#{staffManagedBean.username}" required="true" label="username" />
-
-                        <h:outputLabel for="password" value="Password:" />
-                        <p:password id="password" value="#{staffManagedBean.password}" required="true" label="password" />
-
-                        <f:facet name="footer">
-                            <p:commandButton class="login-button" value="Login" update="growl" action="#{staffManagedBean.login}" />
-                        </f:facet>  
-                    </h:panelGrid>
-                </div>
-
-            </h:form>
-        </div>
     </ui:define>
 
 </ui:composition>
