@@ -12,6 +12,7 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
 
 /**
  *
@@ -69,7 +70,7 @@ public class StaffManagedBean implements Serializable {
         username = null;
         password = null;
         staffId = -1;
-        return "login.xhtml";
+        return "/main/login.xhtml";
     }
 
     public String logout() {
@@ -77,7 +78,8 @@ public class StaffManagedBean implements Serializable {
         password = null;
         staffId = -1;
 
-        return "/login.xhtml?faces-redirect=true";
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        return "/main/login.xhtml?faces-redirect=true";
     }
 
 }
