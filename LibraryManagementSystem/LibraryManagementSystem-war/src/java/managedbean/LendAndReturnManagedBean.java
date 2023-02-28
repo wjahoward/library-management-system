@@ -43,8 +43,7 @@ public class LendAndReturnManagedBean {
     public LendAndReturnManagedBean() {
     }
 
-    public void addLendAndReturn() {
-
+    public void addLendAndReturn(ActionEvent evt) {
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
         Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));

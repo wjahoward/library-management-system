@@ -18,4 +18,6 @@ public interface MemberSessionBeanLocal {
     public void createNewMember(Member m);
     
     public List<Member> searchMembers();
+    
+    public Member find(Long mId);
 }

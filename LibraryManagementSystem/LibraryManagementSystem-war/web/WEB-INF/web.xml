@@ -8,10 +8,6 @@
         <param-name>primefaces.FONT_AWESOME</param-name>
         <param-value>true</param-value>
     </context-param>
-    <context-param>
-        <param-name>javax.faces.FACELETS_LIBRARIES</param-name>
-        <param-value>/WEB-INF/lib/BootsFaces-OSP-1.5.0.jar</param-value>
-    </context-param>
     <filter>
         <filter-name>AuthenticatedFilter</filter-name>
         <filter-class>filter.AuthenticatedFilter</filter-class>
@@ -35,6 +31,6 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>main/login.xhtml</welcome-file>
+        <welcome-file>login.xhtml</welcome-file>
     </welcome-file-list>
 </web-app>

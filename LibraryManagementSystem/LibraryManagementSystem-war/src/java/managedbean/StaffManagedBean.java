@@ -63,6 +63,8 @@ public class StaffManagedBean implements Serializable {
     public String login() throws StaffNotFoundException {
         Staff s = staffSessionBeanLocal.checkStaff(username, password);
 
+        System.out.println("login");
+        
         if (s != null) {
             return "/secret/index.xhtml?faces-redirect=true";
         }
@@ -77,28 +79,11 @@ public class StaffManagedBean implements Serializable {
         username = null;
         password = null;
         staffId = -1;
+        
+        System.out.println("logout");
 
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         return "/main/login.xhtml?faces-redirect=true";
     }
 
 }
-// <h:body style="padding-top: 60px; background-color: #dddddd;">
-//
-//            <b:container style="margin-top: 15em;">
-//                <h:form styleClass="form-signin" prependId="false">
-//                    <h2 class="form-signin-heading" style="text-align:center">Library Management System</h2>
-//                    <b:inputText id="email" placeholder="Username" value="#{staffManagedBean.username}" required="true">
-//                        <f:facet name="prepend">
-//                            <b:icon name="user" />
-//                        </f:facet>
-//                    </b:inputText>
-//                    <b:inputText id="password" placeholder="Password" type="password" value="#{staffManagedBean.password}" required="true">
-//                        <f:facet name="prepend">
-//                            <b:iconAwesome name="key" />
-//                        </f:facet>
-//                    </b:inputText>
-//                    <b:commandButton look="primary btn-block" value="Sign In" icon="log-in" size="lg" action="#{staffManagedBean.login}"/>
-//                </h:form>
-//            </b:container>
-//        </h:body>

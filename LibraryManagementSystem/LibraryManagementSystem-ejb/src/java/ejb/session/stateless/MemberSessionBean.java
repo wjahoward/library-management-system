@@ -32,5 +32,11 @@ public class MemberSessionBean implements MemberSessionBeanLocal {
         Query query = em.createQuery("SELECT m FROM Member m");
         return query.getResultList();
     }
+    
+    @Override
+    public Member find(Long mId) {
+        Member m = em.find(Member.class, mId);
+        return m;
+    }
 
 }
