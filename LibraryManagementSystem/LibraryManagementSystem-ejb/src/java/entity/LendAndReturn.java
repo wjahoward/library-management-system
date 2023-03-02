@@ -30,10 +30,10 @@ public class LendAndReturn implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long lendId;
 
-    @Temporal(TemporalType.DATE)
+    @Column
     private Date lendDate;
 
-    @Temporal(TemporalType.DATE)
+    @Column
     private Date returnDate;
 
     @Column

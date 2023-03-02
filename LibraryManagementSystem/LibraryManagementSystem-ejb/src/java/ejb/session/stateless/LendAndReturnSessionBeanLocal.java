@@ -15,4 +15,10 @@ import javax.ejb.Local;
 @Local
 public interface LendAndReturnSessionBeanLocal {
     public void createLendAndReturn(LendAndReturn lAR, Long bId, Long mId);
+    
+    public boolean checkIfLend(Long bookId);
+    
+    public LendAndReturn getLendAndReturn(Long bookId);
+    
+    public void returnBook(Long bookId);
 }

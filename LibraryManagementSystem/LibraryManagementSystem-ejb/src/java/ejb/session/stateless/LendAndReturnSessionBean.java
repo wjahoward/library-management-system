@@ -8,9 +8,11 @@ package ejb.session.stateless;
 import entity.Book;
 import entity.LendAndReturn;
 import entity.Member;
+import java.util.Date;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -39,6 +41,38 @@ public class LendAndReturnSessionBean implements LendAndReturnSessionBeanLocal {
         b.getLendAndReturns().add(lAR);
         lAR.setBook(b);
        
+        em.flush();
+    }
+    
+    @Override
+    public boolean checkIfLend(Long bookId) {
+        Query query = em.createQuery("SELECT lAR FROM LendAndReturn lAR WHERE lAR.book.bookId = :inBId ORDER BY lAR.lendDate DESC");
+        query.setParameter("inBId", bookId);
+        
+        if (query.getResultList().isEmpty()) {
+            return false;
+        }
+        
+        LendAndReturn lAR = (LendAndReturn)query.getResultList().get(0);
+        
+        return lAR.getReturnDate() == null;
+    }
+    
+    @Override
+    public LendAndReturn getLendAndReturn(Long bookId) {
+        Query query = em.createQuery("SELECT lAR FROM LendAndReturn lAR WHERE lAR.book.bookId = :inBId ORDER BY lAR.lendDate DESC");
+        query.setParameter("inBId", bookId);
+        return (LendAndReturn)query.getResultList().get(0);
+    }
+    
+    @Override
+    public void returnBook(Long bookId) {
+        Query query = em.createQuery("SELECT lAR FROM LendAndReturn lAR WHERE lAR.book.bookId = :inBId ORDER BY lAR.lendDate DESC");
+        query.setParameter("inBId", bookId);
+        
+        LendAndReturn lAR = (LendAndReturn)query.getResultList().get(0);
+        lAR.setReturnDate(new Date());
+        
         em.flush();
     }
 }

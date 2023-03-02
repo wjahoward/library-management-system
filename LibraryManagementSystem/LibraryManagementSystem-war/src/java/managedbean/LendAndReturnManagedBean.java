@@ -10,10 +10,12 @@ import entity.Book;
 import entity.LendAndReturn;
 import entity.Member;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -37,6 +39,12 @@ public class LendAndReturnManagedBean {
     private Book selectedBook;
     private Member selectedMember;
 
+    private LendAndReturn selectedLendAndReturn;
+    private String status;
+
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
     /**
      * Creates a new instance of LendAndReturnManagedBean
      */
@@ -46,7 +54,7 @@ public class LendAndReturnManagedBean {
     public void addLendAndReturn(ActionEvent evt) {
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
-        Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
+        Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId")); // small bug - selecting one and another then cannot read bId
         Long mId = Long.parseLong(externalContext.getRequestParameterMap().get("mId"));
 
         LendAndReturn lAR = new LendAndReturn();
@@ -57,11 +65,45 @@ public class LendAndReturnManagedBean {
         lendAndReturnSessionBeanLocal.createLendAndReturn(lAR, bId, mId);
     }
 
+    public void returnBook(ActionEvent evt) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = context.getExternalContext();
+        Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
+
+        lendAndReturnSessionBeanLocal.returnBook(bId);
+    }
+
     public void updatedSelectedBook() {
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
-        Long bookId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));        
+        Long bookId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
         setbId(bookId);
+    }
+
+    public String getStatus(String boId) {
+        Long bookId = Long.parseLong(boId);
+        if (lendAndReturnSessionBeanLocal.checkIfLend(bookId)) {
+            return "Unavailable";
+        }
+
+        return "Available";
+    }
+
+    public void loadSelectedLendAndReturn() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        
+        try {
+            ExternalContext externalContext = context.getExternalContext();
+            Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
+
+            this.selectedLendAndReturn = lendAndReturnSessionBeanLocal.getLendAndReturn(bId);
+            lendDate = this.selectedLendAndReturn.getLendDate();
+            fineAmount = this.selectedLendAndReturn.getFineAmount();
+            selectedMember = this.selectedLendAndReturn.getMember();
+            status = "Unavailable";
+        } catch (Exception e) {
+            System.out.println("Unable to load lendAndReturn");
+        }
     }
 
     public LendAndReturnSessionBeanLocal getLendAndReturnSessionBeanLocal() {
@@ -96,21 +138,6 @@ public class LendAndReturnManagedBean {
         this.fineAmount = fineAmount;
     }
 
-//    public Member getMember() {
-//        return member;
-//    }
-//
-//    public void setMember(Member member) {
-//        this.member = member;
-//    }
-//
-//    public Book getBook() {
-//        return book;
-//    }
-//
-//    public void setBook(Book book) {
-//        this.book = book;
-//    }
     public Long getbId() {
         return bId;
     }
@@ -118,7 +145,7 @@ public class LendAndReturnManagedBean {
     public void setbId(Long bId) {
         this.bId = bId;
     }
-//        
+
     public Book getSelectedBook() {
         return selectedBook;
     }
@@ -134,4 +161,29 @@ public class LendAndReturnManagedBean {
     public void setSelectedMember(Member selectedMember) {
         this.selectedMember = selectedMember;
     }
+
+    public LendAndReturn getSelectedLendAndReturn() {
+        return selectedLendAndReturn;
+    }
+
+    public void setSelectedLendAndReturn(LendAndReturn selectedLendAndReturn) {
+        this.selectedLendAndReturn = selectedLendAndReturn;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getFormattedLendDate() {
+        return dateFormat.format(lendDate);
+    }
+
+    public String getFormattedLendTime() {
+        return timeFormat.format(lendDate);
+    }
+
 }

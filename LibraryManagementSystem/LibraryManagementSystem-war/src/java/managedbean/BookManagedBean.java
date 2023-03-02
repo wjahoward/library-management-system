@@ -6,8 +6,10 @@
 package managedbean;
 
 import ejb.session.stateless.BookSessionBeanLocal;
+import ejb.session.stateless.LendAndReturnSessionBeanLocal;
 import entity.Book;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -26,6 +28,9 @@ public class BookManagedBean {
     @EJB
     private BookSessionBeanLocal bookSessionBeanLocal;
 
+    @EJB
+    private LendAndReturnSessionBeanLocal lendAndReturnSessionBeanLocal;
+    
     private String title;
     private String isbn;
     private String author;
@@ -34,6 +39,8 @@ public class BookManagedBean {
 
     private long bId;
     private Book selectedBook;
+
+    private String filter = "All";
 
     /**
      * Creates a new instance of BookManagedBean
@@ -56,9 +63,9 @@ public class BookManagedBean {
             isbn = this.selectedBook.getIsbn();
             author = this.selectedBook.getAuthor();
         } catch (Exception e) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unable to load book")); 
-        } 
-    } 
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unable to load book"));
+        }
+    }
 
     public BookSessionBeanLocal getBookSessionBeanLocal() {
         return bookSessionBeanLocal;
@@ -114,6 +121,25 @@ public class BookManagedBean {
 
     public void setSelectedBook(Book selectedBook) {
         this.selectedBook = selectedBook;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
+
+    public List<Book> getFilteredBooks() {
+        switch (filter) {
+            case "Unavailable":
+                return books.stream().filter(b -> lendAndReturnSessionBeanLocal.checkIfLend(b.getBookId())).collect(Collectors.toList());
+            case "Available":
+                return books.stream().filter(b -> !lendAndReturnSessionBeanLocal.checkIfLend(b.getBookId())).collect(Collectors.toList());
+            default:
+                return books; // show all books
+        }
     }
 
 }
