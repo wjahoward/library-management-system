@@ -10,6 +10,7 @@ import entity.Book;
 import entity.LendAndReturn;
 import entity.Member;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.ejb.EJB;
@@ -102,7 +103,7 @@ public class LendAndReturnManagedBean {
             selectedMember = this.selectedLendAndReturn.getMember();
             status = "Unavailable";
         } catch (Exception e) {
-            System.out.println("Unable to load lendAndReturn");
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unable to load lendAndReturn"));
         }
     }
 
@@ -184,6 +185,10 @@ public class LendAndReturnManagedBean {
 
     public String getFormattedLendTime() {
         return timeFormat.format(lendDate);
+    }
+    
+    public BigDecimal getFormattedFineAmount() {
+        return fineAmount.setScale(2, RoundingMode.HALF_UP);
     }
 
 }
