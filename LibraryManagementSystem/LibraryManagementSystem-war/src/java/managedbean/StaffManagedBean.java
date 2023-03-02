@@ -72,7 +72,7 @@ public class StaffManagedBean implements Serializable {
         username = null;
         password = null;
         staffId = -1;
-        return "/main/login.xhtml";
+        return "/login.xhtml";
     }
 
     public String logout() {
@@ -83,7 +83,7 @@ public class StaffManagedBean implements Serializable {
         System.out.println("logout");
 
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-        return "/main/login.xhtml?faces-redirect=true";
+        return "/login.xhtml?faces-redirect=true";
     }
 
 }
