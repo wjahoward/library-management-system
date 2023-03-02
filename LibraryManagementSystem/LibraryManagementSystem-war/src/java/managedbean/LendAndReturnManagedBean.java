@@ -12,6 +12,7 @@ import entity.Member;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -126,26 +127,26 @@ public class LendAndReturnManagedBean {
     public void setStatus(String status) {
         this.status = status;
     }
-    
+
     public Member getMember() {
         return member;
     }
-    
+
     public void setMember(Member member) {
         this.member = member;
     }
-    
+
     public Member getNewMember() {
         return newMember;
     }
-    
+
     public void setNewMember(Member newMember) {
         this.newMember = newMember;
     }
-    
+
     public void memberChanged(ValueChangeEvent event) {
-        member = (Member)event.getNewValue();
-        newMember = (Member)event.getNewValue();
+        member = (Member) event.getNewValue();
+        newMember = (Member) event.getNewValue();
     }
 
     public String getFormattedLendDate() {
@@ -154,6 +155,13 @@ public class LendAndReturnManagedBean {
 
     public String getFormattedLendTime() {
         return timeFormat.format(lendDate);
+    }
+
+    public String getFormattedLendMaxDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(lendDate);
+        calendar.add(Calendar.DAY_OF_YEAR, 14);
+        return dateFormat.format(calendar.getTime());
     }
 
     public BigDecimal getFormattedFineAmount() {
@@ -180,10 +188,10 @@ public class LendAndReturnManagedBean {
         Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
 
         lendAndReturnSessionBeanLocal.returnBook(bId);
-        
+
         setSelectedMember(null);
         System.out.println("return book select member " + selectedMember);
-        
+
         return "searchBook.xhtml?faces-redirect=true";
     }
 
@@ -211,11 +219,11 @@ public class LendAndReturnManagedBean {
             Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
 
             this.selectedLendAndReturn = lendAndReturnSessionBeanLocal.getLendAndReturn(bId);
-            
+
             if (this.selectedLendAndReturn == null) {
                 return;
             }
-            
+
             lendDate = this.selectedLendAndReturn.getLendDate();
             fineAmount = this.selectedLendAndReturn.getFineAmount();
             selectedMember = this.selectedLendAndReturn.getMember();

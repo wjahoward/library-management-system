@@ -25,7 +25,6 @@ public class StaffManagedBean implements Serializable {
     /**
      * Creates a new instance of StaffManagedBean
      */
-    
     @EJB
     StaffSessionBeanLocal staffSessionBeanLocal;
 
@@ -63,9 +62,8 @@ public class StaffManagedBean implements Serializable {
     public String login() throws StaffNotFoundException {
         Staff s = staffSessionBeanLocal.checkStaff(username, password);
 
-        System.out.println("login");
-        
         if (s != null) {
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", username);
             return "/secret/index.xhtml?faces-redirect=true";
         }
 
@@ -79,8 +77,6 @@ public class StaffManagedBean implements Serializable {
         username = null;
         password = null;
         staffId = -1;
-        
-        System.out.println("logout");
 
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         return "/login.xhtml?faces-redirect=true";

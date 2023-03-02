@@ -26,6 +26,8 @@ public class LendAndReturnSessionBean implements LendAndReturnSessionBeanLocal {
 
     @PersistenceContext(unitName = "LibraryManagementSystem-ejbPU")
     private EntityManager em;
+    
+    private final int MAXIMUM_DAYS = 14;
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
@@ -70,8 +72,11 @@ public class LendAndReturnSessionBean implements LendAndReturnSessionBeanLocal {
         }
 
         LendAndReturn lAR = (LendAndReturn) query.getResultList().get(0);
-        withinFourteenDays(lAR);
-
+        
+        if (lAR.getReturnDate() == null) {
+            withinFourteenDays(lAR);
+        }
+        
         return lAR;
     }
 
@@ -87,7 +92,7 @@ public class LendAndReturnSessionBean implements LendAndReturnSessionBeanLocal {
         long diffInMillies = Math.abs(currentDate.getTime() - lendDate.getTime());
         long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
         
-        if (diffInDays > 14) {
+        if (diffInDays > MAXIMUM_DAYS) {
             BigDecimal fineAmount = new BigDecimal((diffInDays - 14) * 0.5);
             lAR.setFineAmount(fineAmount);
         }
