@@ -81,7 +81,7 @@ public class LendAndReturnSessionBean implements LendAndReturnSessionBeanLocal {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, 2023);
         cal.set(Calendar.MONTH, Calendar.MARCH);
-        cal.set(Calendar.DAY_OF_MONTH, 20);
+        cal.set(Calendar.DAY_OF_MONTH, 16);
         Date currentDate = cal.getTime();
         
         long diffInMillies = Math.abs(currentDate.getTime() - lendDate.getTime());

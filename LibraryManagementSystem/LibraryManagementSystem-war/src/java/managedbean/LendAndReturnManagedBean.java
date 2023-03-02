@@ -20,6 +20,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 
 /**
  *
@@ -36,9 +37,11 @@ public class LendAndReturnManagedBean {
     private Date lendDate;
     private Date returnDate;
     private BigDecimal fineAmount;
+    private Member member;
 
     private Book selectedBook;
-    private Member selectedMember;
+    private Member selectedMember = null; // default
+    private Member newMember = null;
 
     private LendAndReturn selectedLendAndReturn;
     private String status;
@@ -50,61 +53,6 @@ public class LendAndReturnManagedBean {
      * Creates a new instance of LendAndReturnManagedBean
      */
     public LendAndReturnManagedBean() {
-    }
-
-    public void addLendAndReturn(ActionEvent evt) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = context.getExternalContext();
-        Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId")); // small bug - selecting one and another then cannot read bId
-        Long mId = Long.parseLong(externalContext.getRequestParameterMap().get("mId"));
-
-        LendAndReturn lAR = new LendAndReturn();
-        lAR.setLendDate(new Date());
-        lAR.setReturnDate(null);
-        lAR.setFineAmount(new BigDecimal(0));
-
-        lendAndReturnSessionBeanLocal.createLendAndReturn(lAR, bId, mId);
-    }
-
-    public void returnBook(ActionEvent evt) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = context.getExternalContext();
-        Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
-
-        lendAndReturnSessionBeanLocal.returnBook(bId);
-    }
-
-    public void updatedSelectedBook() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = context.getExternalContext();
-        Long bookId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
-        setbId(bookId);
-    }
-
-    public String getStatus(String boId) {
-        Long bookId = Long.parseLong(boId);
-        if (lendAndReturnSessionBeanLocal.checkIfLend(bookId)) {
-            return "Unavailable";
-        }
-
-        return "Available";
-    }
-
-    public void loadSelectedLendAndReturn() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        
-        try {
-            ExternalContext externalContext = context.getExternalContext();
-            Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
-
-            this.selectedLendAndReturn = lendAndReturnSessionBeanLocal.getLendAndReturn(bId);
-            lendDate = this.selectedLendAndReturn.getLendDate();
-            fineAmount = this.selectedLendAndReturn.getFineAmount();
-            selectedMember = this.selectedLendAndReturn.getMember();
-            status = "Unavailable";
-        } catch (Exception e) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unable to load lendAndReturn"));
-        }
     }
 
     public LendAndReturnSessionBeanLocal getLendAndReturnSessionBeanLocal() {
@@ -178,6 +126,27 @@ public class LendAndReturnManagedBean {
     public void setStatus(String status) {
         this.status = status;
     }
+    
+    public Member getMember() {
+        return member;
+    }
+    
+    public void setMember(Member member) {
+        this.member = member;
+    }
+    
+    public Member getNewMember() {
+        return newMember;
+    }
+    
+    public void setNewMember(Member newMember) {
+        this.newMember = newMember;
+    }
+    
+    public void memberChanged(ValueChangeEvent event) {
+        member = (Member)event.getNewValue();
+        newMember = (Member)event.getNewValue();
+    }
 
     public String getFormattedLendDate() {
         return dateFormat.format(lendDate);
@@ -186,9 +155,73 @@ public class LendAndReturnManagedBean {
     public String getFormattedLendTime() {
         return timeFormat.format(lendDate);
     }
-    
+
     public BigDecimal getFormattedFineAmount() {
         return fineAmount.setScale(2, RoundingMode.HALF_UP);
     }
 
+    public void addLendAndReturn(ActionEvent evt) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = context.getExternalContext();
+        Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
+
+        LendAndReturn lAR = new LendAndReturn();
+        lAR.setLendDate(new Date());
+        lAR.setReturnDate(null);
+        lAR.setFineAmount(new BigDecimal(0));
+
+        lendAndReturnSessionBeanLocal.createLendAndReturn(lAR, bId, newMember.getMemberId());
+        setNewMember(null);
+    }
+
+    public String returnBook() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = context.getExternalContext();
+        Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
+
+        lendAndReturnSessionBeanLocal.returnBook(bId);
+        
+        setSelectedMember(null);
+        System.out.println("return book select member " + selectedMember);
+        
+        return "searchBook.xhtml?faces-redirect=true";
+    }
+
+    public void updatedSelectedBook() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = context.getExternalContext();
+        Long bookId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
+        setbId(bookId);
+    }
+
+    public String getStatus(String boId) {
+        Long bookId = Long.parseLong(boId);
+        if (lendAndReturnSessionBeanLocal.checkIfLend(bookId)) {
+            return "Unavailable";
+        }
+
+        return "Available";
+    }
+
+    public void loadSelectedLendAndReturn() {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        try {
+            ExternalContext externalContext = context.getExternalContext();
+            Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
+
+            this.selectedLendAndReturn = lendAndReturnSessionBeanLocal.getLendAndReturn(bId);
+            
+            if (this.selectedLendAndReturn == null) {
+                return;
+            }
+            
+            lendDate = this.selectedLendAndReturn.getLendDate();
+            fineAmount = this.selectedLendAndReturn.getFineAmount();
+            selectedMember = this.selectedLendAndReturn.getMember();
+            status = "Unavailable";
+        } catch (Exception e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unable to load lendAndReturn"));
+        }
+    }
 }
