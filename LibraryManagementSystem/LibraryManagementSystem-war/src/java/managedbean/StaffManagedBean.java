@@ -64,7 +64,7 @@ public class StaffManagedBean implements Serializable {
 
         if (s != null) {
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", username);
-            return "/secret/index.xhtml?faces-redirect=true";
+            return "/secret/home.xhtml?faces-redirect=true";
         }
 
         username = null;
