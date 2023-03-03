@@ -19,10 +19,10 @@
                     <h2 class="form-signin-heading" style="text-align:center">Library Management System</h2>
                     <h:panelGrid columns="2" cellpadding="5">
                         <h:outputLabel for="username" value="Username:" />
-                        <p:inputText id="username" value="#{staffManagedBean.username}" required="true" label="username" />
+                        <p:inputText id="username" value="#{staffManagedBean.username}" placeholder="Your username" label="username" required="true"/>
 
                         <h:outputLabel for="password" value="Password:" />
-                        <p:password id="password" value="#{staffManagedBean.password}" required="true" label="password" />
+                        <p:password id="password" value="#{staffManagedBean.password}" placeholder="Your password" label="password" required="true"/>
 
                         <f:facet name="footer">
                             <p:commandButton icon="fa fa-fw fa-user" class="login-button" value="Login" update="growl" action="#{staffManagedBean.login}" />

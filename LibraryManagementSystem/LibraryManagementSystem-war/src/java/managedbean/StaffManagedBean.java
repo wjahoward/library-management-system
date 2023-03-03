@@ -12,6 +12,7 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
 /**
@@ -31,6 +32,9 @@ public class StaffManagedBean implements Serializable {
     private String username;
     private String password;
     private int staffId;
+    
+    private static final String INVALID_CREDENTIALS = "Invalid credentials";
+    private static final String LOGIN_ERROR = "Log in Error";
 
     public StaffManagedBean() {
     }
@@ -59,17 +63,23 @@ public class StaffManagedBean implements Serializable {
         this.staffId = staffId;
     }
 
-    public String login() throws StaffNotFoundException {
-        Staff s = staffSessionBeanLocal.checkStaff(username, password);
+    public String login() {
+        FacesMessage message = null;
 
-        if (s != null) {
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", username);
-            return "/secret/home.xhtml?faces-redirect=true";
+        try {
+            Staff s = staffSessionBeanLocal.checkStaff(username, password);
+
+            if (s != null) {
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", username);
+                return "/secret/home.xhtml?faces-redirect=true";
+            } else {
+                message = new FacesMessage(FacesMessage.SEVERITY_WARN, LOGIN_ERROR, INVALID_CREDENTIALS);
+            }
+        } catch (StaffNotFoundException e) {
+            message = new FacesMessage(FacesMessage.SEVERITY_WARN, LOGIN_ERROR, INVALID_CREDENTIALS);
         }
 
-        username = null;
-        password = null;
-        staffId = -1;
+        FacesContext.getCurrentInstance().addMessage(null, message);
         return "/login.xhtml";
     }
 
