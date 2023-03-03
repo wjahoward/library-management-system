@@ -16,15 +16,24 @@ and open the template in the editor.
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #f7f7f6;
 }
 
 .form-container {
     width: 18em;
-    background-color: #fff;
+    background-color: #ffffff;
     border: 1px solid #ccc;
     padding: 10px;
 }
 
+.login-input-container {
+    text-align: center;
+}
+
+.form-signin-heading {
+    color: #6b6b6b;
+}
+
 .login-button {
-    margin-left: 6em;
+    margin-left: 4.8em;
 }

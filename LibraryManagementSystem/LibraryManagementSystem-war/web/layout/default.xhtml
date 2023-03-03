@@ -14,31 +14,34 @@
         <title><ui:insert name="title">Home</ui:insert></title>
     </h:head>
 
-    <h:body>
-        <h:form>
-            <p:menubar>
-                <p:menuitem value="Home" icon="fa fa-fw fa-home" url="/LibraryManagementSystem-war/secret/index.xhtml" style="margin-top:0.6em;"/>
-                <p:menuitem value="Books" url="/LibraryManagementSystem-war/secret/admin/book/searchBook.xhtml" icon="fa fa-book" style="margin-top:0.6em;"/>
-                <p:submenu label="Members" icon="fa fa-users" style="margin-top:0.6em;">
-                    <p:menuitem value="View Members" url="/LibraryManagementSystem-war/secret/admin/member/searchMember.xhtml"/>
-                    <p:menuitem value="Create Member" url="/LibraryManagementSystem-war/secret/admin/member/createMember.xhtml"/>
-                </p:submenu>
-                <f:facet name="options">
-                    <div style="display: flex; align-items: center;">
-                        <p style="margin-right: 1em;">Welcome back, #{staffManagedBean.username.substring(0, 1).toUpperCase()}#{staffManagedBean.username.substring(1)}!</p>
-                        <p:commandButton type="submit" value="Logout" icon="fa fa-power-off" action="#{staffManagedBean.logout}"/>
-                    </div>
-                </f:facet>
-            </p:menubar>  
-        </h:form>
+    <h:form>
+        <p:menubar class="header-footer">
+            <p:menuitem value="Home" icon="fa fa-fw fa-home" url="/LibraryManagementSystem-war/secret/home.xhtml" class="menu-icon"/>
+            <p:menuitem value="Books" url="/LibraryManagementSystem-war/secret/admin/book/searchBook.xhtml" icon="fa fa-book" class="menu-icon"/>
+            <p:submenu label="Members" icon="fa fa-users" style="margin-top: 0.6em;">
+                <p:menuitem value="View Members" url="/LibraryManagementSystem-war/secret/admin/member/searchMember.xhtml"/>
+                <p:menuitem value="Create Member" url="/LibraryManagementSystem-war/secret/admin/member/createMember.xhtml"/>
+            </p:submenu>
+            <f:facet name="options">
+                <div style="display: flex; align-items: center;">
+                    <p style="margin-right: 1em;">Welcome back, #{staffManagedBean.username.substring(0, 1).toUpperCase()}#{staffManagedBean.username.substring(1)}!</p>
+                    <p:commandButton type="submit" value="Logout" icon="fa fa-power-off" action="#{staffManagedBean.logout}"/>
+                </div>
+            </f:facet>
+        </p:menubar>  
+    </h:form>
 
+    <h:body>
         <div id="content" class="center_content">
             <ui:insert name="content">Content</ui:insert>
         </div>
 
-        <div id="bottom" style="display: flex; align-items: center; justify-content: center; color:black;">
-            <ui:insert name="bottom">Copyright @wjahoward 2023</ui:insert>
-        </div>
+        <ui:insert name="bottom">
+            <div id="bottom">
+                <div class="divider"></div>
+                <p class="header-footer footer-p">Copyright @wjahoward 2023</p>
+            </div>
+        </ui:insert>
 
     </h:body>
 

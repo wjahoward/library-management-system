@@ -38,7 +38,7 @@ public class StaffSessionBean implements StaffSessionBeanLocal {
         {
             return (Staff)query.getSingleResult();
         }
-        catch(NoResultException ex)
+        catch (NoResultException ex)
         {
             throw new StaffNotFoundException("Invalid username and/or password!");
         }

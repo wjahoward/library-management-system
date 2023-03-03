@@ -25,13 +25,10 @@ public class AuthenticatedFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
 
-        HttpServletRequest request1 = (HttpServletRequest) request;
-
+        HttpServletRequest request1 = (HttpServletRequest) request;        
+        
         if (staffManagedBean == null
-                || staffManagedBean.getStaffId() == -1) {
-            //redirect to login page if user is not logged in 
-            //and trying to access "secret/*" paths 
-
+                || staffManagedBean.getStaffId() == null || staffManagedBean.getStaffId() == -1) {
             ((HttpServletResponse) response).sendRedirect(request1.getContextPath() + "/login.xhtml");
         } else {
             //authenticated - continue 
