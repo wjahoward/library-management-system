@@ -8,11 +8,18 @@ package managedbean;
 import ejb.session.stateless.MemberSessionBeanLocal;
 import entity.Member;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /**
  *
@@ -21,10 +28,10 @@ import javax.faces.event.ActionEvent;
 @Named(value = "memberManagedBean")
 @RequestScoped
 public class MemberManagedBean {
-    
+
     @EJB
     private MemberSessionBeanLocal memberSessionBeanLocal;
-    
+
     private String firstName;
     private String lastName;
     private Character gender;
@@ -32,34 +39,27 @@ public class MemberManagedBean {
     private String identityNo;
     private String phone;
     private String address;
-    
+
     private List<Member> members;
     private Member selectedMember;
+    
+    // validation
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
 
     /**
      * Creates a new instance of MemberManagedBean
      */
     public MemberManagedBean() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
-    
+
     @PostConstruct
     public void init() {
         setMembers(memberSessionBeanLocal.searchMembers());
     }
-    
-    public void addMember(ActionEvent evt) {
-        Member m = new Member();
-        m.setFirstName(firstName);
-        m.setLastName(lastName);
-        m.setGender(gender);
-        m.setAge(age);
-        m.setIdentityNo(identityNo);
-        m.setPhone(phone);
-        m.setAddress(address);
-        
-        memberSessionBeanLocal.createNewMember(m);
-    }
-    
+
     public MemberSessionBeanLocal getMemberSessionBeanLocal() {
         return memberSessionBeanLocal;
     }
@@ -139,5 +139,32 @@ public class MemberManagedBean {
     public void setSelectedMember(Member selectedMember) {
         this.selectedMember = selectedMember;
     }
-    
+
+    public void addMember() {
+        Member m = new Member();        
+        m.setFirstName(firstName);
+        m.setLastName(lastName);
+        m.setGender(gender);
+        m.setAge(age);
+        m.setIdentityNo(identityNo);
+        m.setPhone(phone);
+        m.setAddress(address);
+        
+        Set<ConstraintViolation<Member>> constraintViolations = validator.validate(m);
+
+        if (!constraintViolations.isEmpty()) {
+            System.out.println("display validation error");
+            displayValidationErrors(constraintViolations);
+            return;
+        }
+
+//        memberSessionBeanLocal.createNewMember(m);
+    }
+
+    private void displayValidationErrors(Set<ConstraintViolation<Member>> constraintViolations) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        for (ConstraintViolation<Member> violation : constraintViolations) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Backend Validation Error", violation.getMessage()));
+        }
+    }
 }

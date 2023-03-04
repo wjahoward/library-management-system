@@ -15,7 +15,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface MemberSessionBeanLocal {
-    public void createNewMember(Member m);
+    public void createNewMember(Member newMember);
     
     public List<Member> searchMembers();
     

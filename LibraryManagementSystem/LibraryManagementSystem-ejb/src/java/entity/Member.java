@@ -14,6 +14,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 /**
  *
@@ -26,31 +31,47 @@ public class Member implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
-    
-    @Column
+
+    @Column(nullable = false)
+    @NotNull
+    @NotBlank(message = "First name is required.")
     private String firstName;
-    
-    @Column
+
+    @Column(nullable = false)
+    @NotNull
+    @NotBlank(message = "Last name is required.")
     private String lastName;
-    
-    @Column
+
+    @Column(nullable = false)
+    @NotNull(message = "Gender is required.")
     private Character gender;
-    
-    @Column
+
+    @Column(nullable = false)
+    @NotNull(message = "Age is required.")
+    @Min(value = 4, message = "Age has to be minimally 4 years old.")
+    @Max(value = 120, message = "Age cannot exceed 120 years old.")
     private Integer age;
-    
-    @Column
+
+    @Column(nullable = false, length = 9)
+    @NotNull
+    @Pattern(regexp = "[stST][0-9]{7,}[a-zA-Z]{1}", message="Invalid NRIC format. Please enter a valid NRIC in the format S1234567A.")
+    @NotBlank(message = "NRIC is required.")
     private String identityNo;
-    
-    @Column
+
+    @Column(nullable = false)
+    @NotNull
+    @Pattern(regexp = "[89]\\d{7}", message="Invalid mobile phone format. Please enter a valid mobile phone in the format 91234567.")
+    @NotBlank(message = "Mobile Phone is required.")
     private String phone;
-    
-    @Column
+
+    @Column(nullable = false)
+    @NotNull
+    @NotBlank(message = "Addres is required.")
     private String address;
-    
-    @OneToMany(mappedBy="member")
+
+    @OneToMany(mappedBy = "member")
     private List<LendAndReturn> lendAndReturns;
-    
+
     public Member() {
         this.lendAndReturns = new ArrayList<>();
     }
@@ -162,5 +183,5 @@ public class Member implements Serializable {
     public String toString() {
         return "entity.Member[ id=" + memberId + " ]";
     }
-    
+
 }

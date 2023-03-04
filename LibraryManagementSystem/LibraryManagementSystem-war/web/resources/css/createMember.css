@@ -1,0 +1,45 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 4 Mar, 2023, 2:25:43 PM
+    Author     : wjahoward
+*/
+input[type=text] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#member-form\:createMemberButton {
+    background-color: #dddddd;
+    color: #000000;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: block;
+    margin: 1.5em auto;
+}
+
+.createMemberForm {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+
+.form-create-member-heading {
+    color: #6b6b6b;
+    font-size: 1.5rem;
+}
+
+.panel-age {
+    margin-top: 10px; 
+    font-size: 12px;
+}

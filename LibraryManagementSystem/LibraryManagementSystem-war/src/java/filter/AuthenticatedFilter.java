@@ -28,7 +28,7 @@ public class AuthenticatedFilter implements Filter {
         HttpServletRequest request1 = (HttpServletRequest) request;        
         
         if (staffManagedBean == null
-                || staffManagedBean.getStaffId() == null || staffManagedBean.getStaffId() == -1) {
+               /* || staffManagedBean.getStaffId() == null || staffManagedBean.getStaffId() == -1*/) {
             ((HttpServletResponse) response).sendRedirect(request1.getContextPath() + "/login.xhtml");
         } else {
             //authenticated - continue 

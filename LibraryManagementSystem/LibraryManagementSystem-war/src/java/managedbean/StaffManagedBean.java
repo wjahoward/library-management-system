@@ -32,7 +32,7 @@ public class StaffManagedBean implements Serializable {
     private String username;
     private String password;
     private Long staffId;
-    
+
     private static final String INVALID_CREDENTIALS = "Invalid credentials";
     private static final String LOGIN_ERROR = "Log in Error";
 
@@ -72,7 +72,7 @@ public class StaffManagedBean implements Serializable {
             if (s != null) {
                 FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", username);
                 staffId = s.getStaffId();
-                
+
                 return "/secret/home.xhtml?faces-redirect=true";
             } else {
                 message = new FacesMessage(FacesMessage.SEVERITY_WARN, LOGIN_ERROR, INVALID_CREDENTIALS);
@@ -91,7 +91,6 @@ public class StaffManagedBean implements Serializable {
         staffId = -1L;
 
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().clear();
         return "/login.xhtml?faces-redirect=true";
     }
 
