@@ -31,15 +31,17 @@
         </p:menubar>  
     </h:form>
 
-    <h:body>
-        <div id="content" class="center_content">
+    <h:body id="body">
+        <div id="content" class="center-content">
             <ui:insert name="content">Content</ui:insert>
         </div>
 
         <ui:insert name="bottom">
+            <div class="divider"></div>
             <div id="bottom">
-                <div class="divider"></div>
-                <p class="header-footer footer-p">Copyright @wjahoward 2023</p>
+                <div class="left"><p>LMS</p></div>
+                <div class="middle"><p>IS3106 - Enterprise Systems Interface Design and Development</p></div>
+                <div class="right"><p>Howard</p></div>
             </div>
         </ui:insert>
 
