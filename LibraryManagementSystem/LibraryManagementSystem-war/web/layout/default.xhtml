@@ -25,7 +25,7 @@
             <f:facet name="options">
                 <div style="display: flex; align-items: center;">
                     <p style="margin-right: 1em;">Welcome back, #{staffManagedBean.username.substring(0, 1).toUpperCase()}#{staffManagedBean.username.substring(1)}!</p>
-                    <p:commandButton type="submit" value="Logout" icon="fa fa-power-off" action="#{staffManagedBean.logout}"/>
+                    <p:commandButton style="background-color: #ADD8E6; color: #FFFFFF" type="submit" value="Logout" icon="fa fa-power-off" action="#{staffManagedBean.logout}"/>
                 </div>
             </f:facet>
         </p:menubar>  
@@ -40,7 +40,7 @@
             <div class="divider"></div>
             <div id="bottom">
                 <div class="left"><p>LMS</p></div>
-                <div class="middle"><p>IS3106 - Enterprise Systems Interface Design and Development</p></div>
+                <div class="middle"><p>IS3106: Enterprise Systems Interface Design and Development</p></div>
                 <div class="right"><p>Howard</p></div>
             </div>
         </ui:insert>

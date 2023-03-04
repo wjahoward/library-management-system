@@ -15,8 +15,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -31,12 +32,15 @@ public class LendAndReturn implements Serializable {
     private Long lendId;
 
     @Column
+    @NotNull
+    @NotBlank(message = "Lend Date is required.")
     private Date lendDate;
 
     @Column
     private Date returnDate;
 
     @Column
+    @Min(value = 0, message = "Fine Amount cannot be negative.")
     private BigDecimal fineAmount;
 
     @ManyToOne(optional = false)
@@ -44,7 +48,7 @@ public class LendAndReturn implements Serializable {
     private Book book;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "memberId", nullable = true)
+    @JoinColumn(name = "memberId", nullable = false)
     private Member member;
     
     public LendAndReturn() {

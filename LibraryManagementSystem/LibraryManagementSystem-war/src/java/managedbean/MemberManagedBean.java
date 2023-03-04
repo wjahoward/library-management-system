@@ -15,7 +15,6 @@ import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -153,12 +152,11 @@ public class MemberManagedBean {
         Set<ConstraintViolation<Member>> constraintViolations = validator.validate(m);
 
         if (!constraintViolations.isEmpty()) {
-            System.out.println("display validation error");
             displayValidationErrors(constraintViolations);
             return;
         }
 
-//        memberSessionBeanLocal.createNewMember(m);
+        memberSessionBeanLocal.createNewMember(m);
     }
 
     private void displayValidationErrors(Set<ConstraintViolation<Member>> constraintViolations) {

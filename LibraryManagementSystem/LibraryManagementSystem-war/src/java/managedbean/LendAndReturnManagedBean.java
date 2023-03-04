@@ -14,14 +14,18 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /**
  *
@@ -50,10 +54,16 @@ public class LendAndReturnManagedBean {
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
+    // validation
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+    
     /**
      * Creates a new instance of LendAndReturnManagedBean
      */
     public LendAndReturnManagedBean() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
 
     public LendAndReturnSessionBeanLocal getLendAndReturnSessionBeanLocal() {
@@ -168,7 +178,7 @@ public class LendAndReturnManagedBean {
         return fineAmount.setScale(2, RoundingMode.HALF_UP);
     }
 
-    public void addLendAndReturn(ActionEvent evt) {
+    public void addLendAndReturn() {
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
         Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
@@ -177,12 +187,25 @@ public class LendAndReturnManagedBean {
         lAR.setLendDate(new Date());
         lAR.setReturnDate(null);
         lAR.setFineAmount(new BigDecimal(0));
+        
+        Set<ConstraintViolation<LendAndReturn>> constraintViolations = validator.validate(lAR);
+
+        if (!constraintViolations.isEmpty()) {
+            displayValidationErrors(constraintViolations);
+            return;
+        }
 
         lendAndReturnSessionBeanLocal.createLendAndReturn(lAR, bId, newMember.getMemberId());
-        setNewMember(null);
+    }
+    
+    private void displayValidationErrors(Set<ConstraintViolation<LendAndReturn>> constraintViolations) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        for (ConstraintViolation<LendAndReturn> violation : constraintViolations) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Backend Validation Error", violation.getMessage()));
+        }
     }
 
-    public String returnBook() {
+    public void returnBook() {
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
         Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
@@ -190,9 +213,6 @@ public class LendAndReturnManagedBean {
         lendAndReturnSessionBeanLocal.returnBook(bId);
 
         setSelectedMember(null);
-        System.out.println("return book select member " + selectedMember);
-
-        return "searchBook.xhtml?faces-redirect=true";
     }
 
     public void updatedSelectedBook() {
