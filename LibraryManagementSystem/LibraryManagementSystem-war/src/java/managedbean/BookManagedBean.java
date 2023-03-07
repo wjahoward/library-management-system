@@ -41,6 +41,8 @@ public class BookManagedBean {
     private Book selectedBook;
 
     private String filter = "All";
+    
+    private String image;
 
     /**
      * Creates a new instance of BookManagedBean
@@ -130,7 +132,34 @@ public class BookManagedBean {
     public void setFilter(String filter) {
         this.filter = filter;
     }
-
+    
+    public String getImage(String imagePath) {
+        imagePath += "/resources/images/";
+        
+        switch (title) {
+            case "Anna Karenina":
+                return imagePath + "anna-karenina.jpeg";
+            case "Madame Bovary":
+                return imagePath + "madame-bovary.jpeg";
+            case "Hamlet":
+                return imagePath + "hamlet.jpeg";
+            case "The Hobbit":
+                return imagePath + "the-hobbit.jpeg";
+            case "Great Expectations":
+                return imagePath + "great-expectations.jpeg";
+            case "Pride and Prejudice":
+                return imagePath + "pride-and-prejudice.jpeg";
+            case "Wuthering Heights":
+                return imagePath + "wuthering-heights.jpeg";
+        }
+        
+        return "";
+    }
+    
+    public void setImage(String image) {
+        this.image = image;
+    }
+    
     public List<Book> getFilteredBooks() {
         switch (filter) {
             case "Unavailable":
