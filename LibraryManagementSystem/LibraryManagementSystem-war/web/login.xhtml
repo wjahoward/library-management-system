@@ -15,11 +15,11 @@
         <div class="login-container">
             <h:form>
                 <div class="form-container">
-                    <p:growl id="growl" sticky="true" showDetail="true" life="3000" />
+                    <p:growl id="growl" sticky="true" life="3000" />
                     <div class="login-input-container">
                         <p class="form-signin-heading">Library Management System (LMS)</p>
-                        <p:inputText id="username" value="#{staffManagedBean.username}" placeholder="Your username" label="username" required="true"/><br/><br/>
-                        <p:password id="password" value="#{staffManagedBean.password}" placeholder="Your password" label="password" required="true"/>
+                        <p:inputText id="username" value="#{staffManagedBean.username}" placeholder="Your username" label="username" required="true" requiredMessage="Username is required."/><br/><br/>
+                        <p:password id="password" value="#{staffManagedBean.password}" placeholder="Your password" label="password" required="true" requiredMessage="Password is required."/>
                         <h:panelGrid columns="2" cellpadding="5">
                             <f:facet name="footer">
                                 <p:commandButton icon="fa fa-fw fa-user" class="login-button" value="Login" update="growl" action="#{staffManagedBean.login}" />

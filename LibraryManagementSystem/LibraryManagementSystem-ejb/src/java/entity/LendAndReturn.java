@@ -32,8 +32,7 @@ public class LendAndReturn implements Serializable {
     private Long lendId;
 
     @Column
-    @NotNull
-    @NotBlank(message = "Lend Date is required.")
+    @NotNull(message = "Lend Date is required.")
     private Date lendDate;
 
     @Column

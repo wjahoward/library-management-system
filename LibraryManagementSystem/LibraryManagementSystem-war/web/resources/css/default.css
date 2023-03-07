@@ -24,3 +24,7 @@ body {
 #member-form\:command-button-ok {
     margin-left: 7em;
 }
+
+#search-book-form\:dt-books_data {
+    text-align: center;
+}
