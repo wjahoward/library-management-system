@@ -104,15 +104,18 @@ public class LendAndReturnSessionBean implements LendAndReturnSessionBeanLocal {
     private void withinFourteenDays(LendAndReturn lAR) {
         Date lendDate = lAR.getLendDate();
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.YEAR, 2023);
-        cal.set(Calendar.MONTH, Calendar.MARCH);
-        cal.set(Calendar.DAY_OF_MONTH, 30);
-        Date currentDate = cal.getTime();
-
-        long diffInMillies = Math.abs(currentDate.getTime() - lendDate.getTime());
-        long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-
+        // testing purpose
+//        Calendar cal = Calendar.getInstance();
+//        cal.set(Calendar.YEAR, 2023);
+//        cal.set(Calendar.MONTH, Calendar.MARCH);
+//        cal.set(Calendar.DAY_OF_MONTH, 30);
+//        Date currentDate = cal.getTime();
+//
+//        long diffInMillies = Math.abs(currentDate.getTime() - lendDate.getTime());
+//        long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+        Date currentDate = new Date();
+        long diffInMilliseconds = currentDate.getTime() - lendDate.getTime();
+        long diffInDays = diffInMilliseconds / (24 * 60 * 60 * 1000);
         if (diffInDays > MAXIMUM_DAYS) {
             BigDecimal fineAmount = new BigDecimal((diffInDays - 14) * 0.5);
             lAR.setFineAmount(fineAmount);

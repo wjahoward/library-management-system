@@ -221,7 +221,8 @@ public class LendAndReturnManagedBean implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
         Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
-
+        
+        // testing purpose
 //        Calendar cal = Calendar.getInstance();
 //        cal.set(Calendar.YEAR, 2023);
 //        cal.set(Calendar.MONTH, Calendar.MARCH);
