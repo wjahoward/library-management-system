@@ -12,4 +12,4 @@
 # Additional Features
 - Authenticaiton Filter: Only permit authenticated user to access the pages
 - Custom Validation Checks: Uses Regex i.e. NRIC, Mobile Phone
-- Responsive Navigation Bar: Will be adjusted according to the window size of the screen
+- Responsive Navigation Bar & Pages: Will be adjusted according to the window size of the screen
