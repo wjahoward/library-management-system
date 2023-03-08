@@ -16,7 +16,7 @@ body {
     color: #fff;
 }
 
-#member-form\:command-button-ok, #test-form\:command-button-ok, #return-form\:command-button-ok {
+#member-form\:command-button-ok, #test-form\:command-button-ok, #return-form\:command-button-ok, #loan-books-form\:command-button-ok, button[id^='loan-books-form:ui-repeat-lend-and-return'][id$=':command-button-ok']  {
     background-color: #4CAF50;
     color: #FFFFFF;
 }

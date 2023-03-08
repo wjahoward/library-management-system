@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.LendAndReturn;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -20,5 +21,9 @@ public interface LendAndReturnSessionBeanLocal {
     
     public LendAndReturn getLendAndReturn(Long bookId);
     
+    public List<LendAndReturn> getLendAndReturns(Long memberId);
+    
     public void returnBook(Long bookId);
+    
+    public void returnAllBooks(Long memberId);
 }

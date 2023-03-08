@@ -39,6 +39,7 @@ public class MemberManagedBean {
     private String phone;
     private String address;
 
+    private long mId;
     private List<Member> members;
     private Member selectedMember;
     
@@ -139,6 +140,14 @@ public class MemberManagedBean {
         this.selectedMember = selectedMember;
     }
 
+    public long getmId() {
+        return mId;
+    }
+
+    public void setmId(long mId) {
+        this.mId = mId;
+    }
+    
     public void addMember() {
         Member m = new Member();        
         m.setFirstName(firstName);
@@ -163,6 +172,24 @@ public class MemberManagedBean {
         FacesContext context = FacesContext.getCurrentInstance();
         for (ConstraintViolation<Member> violation : constraintViolations) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Backend Validation Error", violation.getMessage()));
+        }
+    }
+    
+    public void loadSelectedMember() {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        try {
+            this.selectedMember
+                    = memberSessionBeanLocal.getMember(mId);
+            address = this.selectedMember.getAddress();
+            age = this.selectedMember.getAge();
+            firstName = this.selectedMember.getFirstName();
+            lastName = this.selectedMember.getLastName();
+            gender = this.selectedMember.getGender();
+            identityNo = this.selectedMember.getIdentityNo();
+            phone = this.selectedMember.getPhone();
+        } catch (Exception e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unable to load member"));
         }
     }
 }

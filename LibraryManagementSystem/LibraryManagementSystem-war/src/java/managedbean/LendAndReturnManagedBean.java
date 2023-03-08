@@ -9,19 +9,21 @@ import ejb.session.stateless.LendAndReturnSessionBeanLocal;
 import entity.Book;
 import entity.LendAndReturn;
 import entity.Member;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.view.ViewScoped;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -32,8 +34,8 @@ import javax.validation.ValidatorFactory;
  * @author wjahoward
  */
 @Named(value = "lendAndReturnManagedBean")
-@RequestScoped
-public class LendAndReturnManagedBean {
+@ViewScoped
+public class LendAndReturnManagedBean implements Serializable {
 
     @EJB
     private LendAndReturnSessionBeanLocal lendAndReturnSessionBeanLocal;
@@ -49,7 +51,9 @@ public class LendAndReturnManagedBean {
     private Member newMember = null;
 
     private LendAndReturn selectedLendAndReturn;
+    private List<LendAndReturn> selectedLendAndReturns;
     private String status;
+    private BigDecimal totalFine;
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -57,7 +61,7 @@ public class LendAndReturnManagedBean {
     // validation
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
-    
+
     /**
      * Creates a new instance of LendAndReturnManagedBean
      */
@@ -130,6 +134,14 @@ public class LendAndReturnManagedBean {
         this.selectedLendAndReturn = selectedLendAndReturn;
     }
 
+    public List<LendAndReturn> getSelectedLendAndReturns() {
+        return selectedLendAndReturns;
+    }
+
+    public void setSelectedLendAndReturns(List<LendAndReturn> selectedLendAndReturns) {
+        this.selectedLendAndReturns = selectedLendAndReturns;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -153,6 +165,14 @@ public class LendAndReturnManagedBean {
     public void setNewMember(Member newMember) {
         this.newMember = newMember;
     }
+    
+    public BigDecimal getTotalFine() {
+        return this.totalFine;
+    }
+    
+    public void setTotalFine(BigDecimal totalFine) {
+        this.totalFine = totalFine;
+    }
 
     public void memberChanged(ValueChangeEvent event) {
         member = (Member) event.getNewValue();
@@ -163,7 +183,15 @@ public class LendAndReturnManagedBean {
         return dateFormat.format(lendDate);
     }
 
+    public String setFormattedLendDate(Date lendDate) {
+        return dateFormat.format(lendDate);
+    }
+
     public String getFormattedLendTime() {
+        return timeFormat.format(lendDate);
+    }
+
+    public String setFormattedLendTime(Date lendDate) {
         return timeFormat.format(lendDate);
     }
 
@@ -174,7 +202,18 @@ public class LendAndReturnManagedBean {
         return dateFormat.format(calendar.getTime());
     }
 
+    public String setFormattedLendMaxDate(Date lendDate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(lendDate);
+        calendar.add(Calendar.DAY_OF_YEAR, 14);
+        return dateFormat.format(calendar.getTime());
+    }
+
     public BigDecimal getFormattedFineAmount() {
+        return fineAmount.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal setFormattedFineAmount(BigDecimal fineAmount) {
         return fineAmount.setScale(2, RoundingMode.HALF_UP);
     }
 
@@ -183,11 +222,17 @@ public class LendAndReturnManagedBean {
         ExternalContext externalContext = context.getExternalContext();
         Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
 
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, 2023);
+        cal.set(Calendar.MONTH, Calendar.MARCH);
+        cal.set(Calendar.DAY_OF_MONTH, 20);
+        Date ld = cal.getTime();
+
         LendAndReturn lAR = new LendAndReturn();
-        lAR.setLendDate(new Date());
+        lAR.setLendDate(ld);
         lAR.setReturnDate(null);
         lAR.setFineAmount(new BigDecimal(0));
-        
+
         Set<ConstraintViolation<LendAndReturn>> constraintViolations = validator.validate(lAR);
 
         if (!constraintViolations.isEmpty()) {
@@ -197,7 +242,7 @@ public class LendAndReturnManagedBean {
 
         lendAndReturnSessionBeanLocal.createLendAndReturn(lAR, bId, newMember.getMemberId());
     }
-    
+
     private void displayValidationErrors(Set<ConstraintViolation<LendAndReturn>> constraintViolations) {
         FacesContext context = FacesContext.getCurrentInstance();
         for (ConstraintViolation<LendAndReturn> violation : constraintViolations) {
@@ -211,8 +256,14 @@ public class LendAndReturnManagedBean {
         Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
 
         lendAndReturnSessionBeanLocal.returnBook(bId);
+    }
+    
+    public void returnAllBooks() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = context.getExternalContext();
+        Long mId = Long.parseLong(externalContext.getRequestParameterMap().get("mId"));
 
-        setSelectedMember(null);
+        lendAndReturnSessionBeanLocal.returnAllBooks(mId);
     }
 
     public void updatedSelectedBook() {
@@ -251,5 +302,57 @@ public class LendAndReturnManagedBean {
         } catch (Exception e) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unable to load lendAndReturn"));
         }
+    }
+
+    public void loadSelectedLendAndReturns() {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        try {
+            ExternalContext externalContext = context.getExternalContext();
+            Long mId = Long.parseLong(externalContext.getRequestParameterMap().get("mId"));
+
+            this.selectedLendAndReturns = lendAndReturnSessionBeanLocal.getLendAndReturns(mId);
+        } catch (Exception e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unable to load lendAndReturn"));
+        }
+    }
+
+    public String viewMember() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = context.getExternalContext();
+        Long mId = Long.parseLong(externalContext.getRequestParameterMap().get("mId"));
+        return "/secret/admin/member/viewMember.xhtml?faces-redirect=true&mId=" + mId;
+    }
+
+    public boolean checkBookings() {
+        return selectedLendAndReturns == null;
+    }
+
+    public String getGender() {
+        return selectedMember.getGender() == 'M' ? "Male" : "Female";
+    }
+
+    public String showFine(BigDecimal fineAmount) {
+        return "Pay a Fine of $" + fineAmount.setScale(2, RoundingMode.HALF_UP);
+    }
+    
+    public String showTotalFine(BigDecimal fineAmount) {
+        return "Pay a Total Fine of $" + fineAmount.setScale(2, RoundingMode.HALF_UP);
+    }
+    
+    public BigDecimal getTotalFine(List<LendAndReturn> lendAndReturns) {
+        BigDecimal currentTotalFine = new BigDecimal(0);
+        
+        if (lendAndReturns.isEmpty()) {
+            return new BigDecimal(0);
+        }
+        
+        for (LendAndReturn lAR : lendAndReturns) {
+            currentTotalFine = currentTotalFine.add(lAR.getFineAmount());
+        }
+        
+        this.totalFine = currentTotalFine;
+        
+        return currentTotalFine;
     }
 }

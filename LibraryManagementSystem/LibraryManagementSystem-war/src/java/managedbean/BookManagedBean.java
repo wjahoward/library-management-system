@@ -42,8 +42,6 @@ public class BookManagedBean {
 
     private String filter = "All";
     
-    private String image;
-
     /**
      * Creates a new instance of BookManagedBean
      */
@@ -154,10 +152,6 @@ public class BookManagedBean {
         }
         
         return "";
-    }
-    
-    public void setImage(String image) {
-        this.image = image;
     }
     
     public List<Book> getFilteredBooks() {

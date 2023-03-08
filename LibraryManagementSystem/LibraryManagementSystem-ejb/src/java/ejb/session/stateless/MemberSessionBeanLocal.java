@@ -20,4 +20,6 @@ public interface MemberSessionBeanLocal {
     public List<Member> searchMembers();
     
     public Member find(Long mId);
+    
+    public Member getMember(Long mId);
 }

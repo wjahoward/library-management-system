@@ -11,6 +11,7 @@ import entity.Member;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -26,7 +27,7 @@ public class LendAndReturnSessionBean implements LendAndReturnSessionBeanLocal {
 
     @PersistenceContext(unitName = "LibraryManagementSystem-ejbPU")
     private EntityManager em;
-    
+
     private final int MAXIMUM_DAYS = 14;
 
     // Add business logic below. (Right-click in editor and choose
@@ -72,29 +73,51 @@ public class LendAndReturnSessionBean implements LendAndReturnSessionBeanLocal {
         }
 
         LendAndReturn lAR = (LendAndReturn) query.getResultList().get(0);
-        
+
         if (lAR.getReturnDate() == null) {
             withinFourteenDays(lAR);
         }
-        
+
+        return lAR;
+    }
+
+    @Override
+    public List<LendAndReturn> getLendAndReturns(Long memberId) {
+        Query query = em.createQuery("SELECT lAR FROM LendAndReturn lAR WHERE lAR.member.memberId = :inMId AND lAR.returnDate IS NULL");
+        query.setParameter("inMId", memberId);
+
+        if (query.getResultList().isEmpty()) {
+            return null;
+        }
+
+        List<LendAndReturn> lAR = (List<LendAndReturn>) query.getResultList();
+
+        for (int i = 0; i < lAR.size(); i++) {
+            if (lAR.get(i).getReturnDate() == null) {
+                withinFourteenDays(lAR.get(i));
+            }
+        }
+
         return lAR;
     }
 
     private void withinFourteenDays(LendAndReturn lAR) {
         Date lendDate = lAR.getLendDate();
-        
+
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, 2023);
         cal.set(Calendar.MONTH, Calendar.MARCH);
-        cal.set(Calendar.DAY_OF_MONTH, 16);
+        cal.set(Calendar.DAY_OF_MONTH, 20);
         Date currentDate = cal.getTime();
-        
+
         long diffInMillies = Math.abs(currentDate.getTime() - lendDate.getTime());
         long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-        
+
         if (diffInDays > MAXIMUM_DAYS) {
             BigDecimal fineAmount = new BigDecimal((diffInDays - 14) * 0.5);
             lAR.setFineAmount(fineAmount);
+        } else {
+            lAR.setFineAmount(new BigDecimal(0));
         }
     }
 
@@ -105,6 +128,20 @@ public class LendAndReturnSessionBean implements LendAndReturnSessionBeanLocal {
 
         LendAndReturn lAR = (LendAndReturn) query.getResultList().get(0);
         lAR.setReturnDate(new Date());
+
+        em.flush();
+    }
+
+    @Override
+    public void returnAllBooks(Long memberId) {
+        Query query = em.createQuery("SELECT lAR FROM LendAndReturn lAR WHERE lAR.member.memberId = :inMId AND lAR.returnDate IS NULL");
+        query.setParameter("inMId", memberId);
+
+        List<LendAndReturn> lendAndReturns = (List<LendAndReturn>) query.getResultList();
+
+        for (LendAndReturn lAR : lendAndReturns) {
+            lAR.setReturnDate(new Date());
+        }
 
         em.flush();
     }
