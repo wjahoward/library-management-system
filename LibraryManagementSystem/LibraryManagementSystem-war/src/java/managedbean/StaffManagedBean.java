@@ -67,7 +67,7 @@ public class StaffManagedBean implements Serializable {
         FacesMessage message = null;
 
         try {
-            Staff s = staffSessionBeanLocal.checkStaff(username, password);
+            Staff s = staffSessionBeanLocal.checkStaff(username.trim(), password);
 
             if (s != null) {
                 FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", username);
