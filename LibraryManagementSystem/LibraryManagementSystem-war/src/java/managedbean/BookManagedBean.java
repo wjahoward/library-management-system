@@ -8,6 +8,7 @@ package managedbean;
 import ejb.session.stateless.BookSessionBeanLocal;
 import ejb.session.stateless.LendAndReturnSessionBeanLocal;
 import entity.Book;
+import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -16,6 +17,8 @@ import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 /**
  *
@@ -30,7 +33,7 @@ public class BookManagedBean {
 
     @EJB
     private LendAndReturnSessionBeanLocal lendAndReturnSessionBeanLocal;
-    
+
     private String title;
     private String isbn;
     private String author;
@@ -41,7 +44,7 @@ public class BookManagedBean {
     private Book selectedBook;
 
     private String filter = "All";
-    
+
     /**
      * Creates a new instance of BookManagedBean
      */
@@ -130,30 +133,28 @@ public class BookManagedBean {
     public void setFilter(String filter) {
         this.filter = filter;
     }
-    
-    public String getImage(String imagePath) {
-        imagePath += "/resources/images/";
-        
-        switch (title) {
+
+    public String getImage(String titleOfBook) {
+        switch (titleOfBook) {
             case "Anna Karenina":
-                return imagePath + "anna-karenina.jpeg";
+                return "anna-karenina.jpeg";
             case "Madame Bovary":
-                return imagePath + "madame-bovary.jpeg";
+                return "madame-bovary.jpeg";
             case "Hamlet":
-                return imagePath + "hamlet.jpeg";
+                return "hamlet.jpeg";
             case "The Hobbit":
-                return imagePath + "the-hobbit.jpeg";
+                return "the-hobbit.jpeg";
             case "Great Expectations":
-                return imagePath + "great-expectations.jpeg";
+                return "great-expectations.jpeg";
             case "Pride and Prejudice":
-                return imagePath + "pride-and-prejudice.jpeg";
+                return "pride-and-prejudice.jpeg";
             case "Wuthering Heights":
-                return imagePath + "wuthering-heights.jpeg";
+                return "wuthering-heights.jpeg";
         }
-        
+
         return "";
     }
-    
+
     public List<Book> getFilteredBooks() {
         switch (filter) {
             case "Unavailable":
