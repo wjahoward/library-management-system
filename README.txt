@@ -19,3 +19,4 @@
 # Note
 - For line 42 of createMember.xhtml, do not format the following code:
 onkeypress="if (event.which &lt; 48 || event.which &gt; 57) return false;"> <!-- do not format this, as it allows user to not key in any alphabets -->
+- "Pay a Total Fine of $.." allows the user to pay the total fine amount and returning all books

@@ -51,7 +51,7 @@ public class LendAndReturnSessionBean implements LendAndReturnSessionBeanLocal {
 
     @Override
     public boolean checkIfLend(Long bookId) {
-        Query query = em.createQuery("SELECT lAR FROM LendAndReturn lAR WHERE lAR.book.bookId = :inBId ORDER BY lAR.lendDate DESC");
+        Query query = em.createQuery("SELECT lAR FROM LendAndReturn lAR WHERE lAR.book.bookId = :inBId AND lAR.returnDate IS NULL ORDER BY lAR.lendDate DESC");
         query.setParameter("inBId", bookId);
 
         if (query.getResultList().isEmpty()) {
@@ -105,17 +105,17 @@ public class LendAndReturnSessionBean implements LendAndReturnSessionBeanLocal {
         Date lendDate = lAR.getLendDate();
 
         // testing purpose
-//        Calendar cal = Calendar.getInstance();
-//        cal.set(Calendar.YEAR, 2023);
-//        cal.set(Calendar.MONTH, Calendar.MARCH);
-//        cal.set(Calendar.DAY_OF_MONTH, 30);
-//        Date currentDate = cal.getTime();
-//
-//        long diffInMillies = Math.abs(currentDate.getTime() - lendDate.getTime());
-//        long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-        Date currentDate = new Date();
-        long diffInMilliseconds = currentDate.getTime() - lendDate.getTime();
-        long diffInDays = diffInMilliseconds / (24 * 60 * 60 * 1000);
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, 2023);
+        cal.set(Calendar.MONTH, Calendar.APRIL);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        Date currentDate = cal.getTime();
+
+        long diffInMillies = Math.abs(currentDate.getTime() - lendDate.getTime());
+        long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+//        Date currentDate = new Date();
+//        long diffInMilliseconds = currentDate.getTime() - lendDate.getTime();
+//        long diffInDays = diffInMilliseconds / (24 * 60 * 60 * 1000);
         if (diffInDays > MAXIMUM_DAYS) {
             BigDecimal fineAmount = new BigDecimal((diffInDays - 14) * 0.5);
             lAR.setFineAmount(fineAmount);

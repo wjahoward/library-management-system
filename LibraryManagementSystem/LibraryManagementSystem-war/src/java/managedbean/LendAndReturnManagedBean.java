@@ -223,15 +223,15 @@ public class LendAndReturnManagedBean implements Serializable {
         Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
         
         // testing purpose
-//        Calendar cal = Calendar.getInstance();
-//        cal.set(Calendar.YEAR, 2023);
-//        cal.set(Calendar.MONTH, Calendar.MARCH);
-//        cal.set(Calendar.DAY_OF_MONTH, 20);
-//        Date ld = cal.getTime();
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, 2023);
+        cal.set(Calendar.MONTH, Calendar.MARCH);
+        cal.set(Calendar.DAY_OF_MONTH, 20);
+        Date ld = cal.getTime();
 
         LendAndReturn lAR = new LendAndReturn();
-//        lAR.setLendDate(ld);
-        lAR.setLendDate(new Date());
+        lAR.setLendDate(ld);
+//        lAR.setLendDate(new Date());
         lAR.setReturnDate(null);
         lAR.setFineAmount(new BigDecimal(0));
 
