@@ -75,10 +75,10 @@ public class StaffManagedBean implements Serializable {
 
                 return "/secret/home.xhtml?faces-redirect=true";
             } else {
-                message = new FacesMessage(FacesMessage.SEVERITY_WARN, LOGIN_ERROR, INVALID_CREDENTIALS);
+                message = new FacesMessage(FacesMessage.SEVERITY_ERROR, LOGIN_ERROR, INVALID_CREDENTIALS);
             }
         } catch (StaffNotFoundException e) {
-            message = new FacesMessage(FacesMessage.SEVERITY_WARN, LOGIN_ERROR, INVALID_CREDENTIALS);
+            message = new FacesMessage(FacesMessage.SEVERITY_ERROR, LOGIN_ERROR, INVALID_CREDENTIALS);
         }
 
         FacesContext.getCurrentInstance().addMessage(null, message);

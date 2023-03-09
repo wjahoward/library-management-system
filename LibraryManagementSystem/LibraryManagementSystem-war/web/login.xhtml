@@ -22,7 +22,7 @@
                         <p:password id="password" value="#{staffManagedBean.password}" placeholder="Your password" label="password" required="true" requiredMessage="Password is required."/>
                         <h:panelGrid columns="2" cellpadding="5">
                             <f:facet name="footer">
-                                <p:commandButton icon="fa fa-fw fa-user" class="login-button" value="Login" update="growl" action="#{staffManagedBean.login}" />
+                                <p:commandButton icon="fa fa-fw fa-user" class="login-button" value="Login" update="growl" action="#{staffManagedBean.login}" validateClient="true"/>
                             </f:facet>  
                         </h:panelGrid>   
                     </div>
