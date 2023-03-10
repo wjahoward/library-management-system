@@ -6,6 +6,8 @@
 package ejb.session.stateless;
 
 import entity.Member;
+import exception.EntityManagerException;
+import exception.MemberNotFoundException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -15,11 +17,10 @@ import javax.ejb.Local;
  */
 @Local
 public interface MemberSessionBeanLocal {
-    public void createNewMember(Member newMember);
+    public void createNewMember(Member newMember) throws EntityManagerException;
     
-    public List<Member> searchMembers();
+    public List<Member> searchMembers() throws EntityManagerException;
     
-    public Member find(Long mId);
-    
-    public Member getMember(Long mId);
+    public Member getMember(Long mId) throws EntityManagerException, MemberNotFoundException;
+   
 }

@@ -7,6 +7,7 @@ package converter;
 
 import ejb.session.stateless.MemberSessionBeanLocal;
 import entity.Member;
+import exception.EntityManagerException;
 import java.util.List;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
@@ -30,10 +31,10 @@ public class MemberTestConverter implements Converter {
      */
     @Inject
     private MemberSessionBeanLocal msb;
-    
+
     public MemberTestConverter() {
     }
-    
+
     @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String submittedValue) {
         if (submittedValue == null || submittedValue.length() == 0 || submittedValue.equals("null")) {
@@ -43,18 +44,18 @@ public class MemberTestConverter implements Converter {
         try {
             Long objLong = Long.parseLong(submittedValue);
             List<Member> members = msb.searchMembers();
-            
-            for(Member member:members)
-            {
-                if(member.getMemberId().equals(objLong))
-                {
+
+            for (Member member : members) {
+                if (member.getMemberId().equals(objLong)) {
                     return member;
                 }
             }
+        } catch (EntityManagerException ex) {
+            System.out.println("Entity manager error");
         } catch (NumberFormatException e) {
-            throw new ConverterException(new FacesMessage(submittedValue + " is not a valid Warehouse ID"), e);
+            System.out.println("Number format error");
         }
-        
+
         return null;
     }
 
@@ -70,5 +71,5 @@ public class MemberTestConverter implements Converter {
             throw new ConverterException(new FacesMessage(modelValue + " is not a valid Member"));
         }
     }
-    
+
 }

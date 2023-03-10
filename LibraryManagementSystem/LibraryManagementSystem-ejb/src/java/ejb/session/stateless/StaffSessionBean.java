@@ -29,19 +29,12 @@ public class StaffSessionBean implements StaffSessionBeanLocal {
     }
     
     @Override
-    public Staff checkStaff(String username, String password) throws StaffNotFoundException {
+    public Staff checkStaff(String username, String password) {
         Query query = em.createQuery("SELECT s FROM Staff s WHERE s.userName = :userName AND s.password = :password");
         query.setParameter("userName", username);
         query.setParameter("password", password);
-        
-        try
-        {
-            return (Staff)query.getSingleResult();
-        }
-        catch (NoResultException ex)
-        {
-            throw new StaffNotFoundException("Invalid username and/or password!");
-        }
+
+        return (Staff)query.getSingleResult();
     }
         
 }

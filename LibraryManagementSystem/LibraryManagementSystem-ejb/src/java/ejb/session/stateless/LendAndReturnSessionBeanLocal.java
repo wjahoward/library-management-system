@@ -6,6 +6,11 @@
 package ejb.session.stateless;
 
 import entity.LendAndReturn;
+import exception.BookNotFoundException;
+import exception.EntityManagerException;
+import exception.LendingNotFoundException;
+import exception.LendingsNotFoundException;
+import exception.MemberNotFoundException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -15,15 +20,15 @@ import javax.ejb.Local;
  */
 @Local
 public interface LendAndReturnSessionBeanLocal {
-    public void createLendAndReturn(LendAndReturn lAR, Long bId, Long mId);
+    public void createLendAndReturn(LendAndReturn lAR, Long bId, Long mId) throws EntityManagerException, MemberNotFoundException, BookNotFoundException;
     
-    public boolean checkIfLend(Long bookId);
+    public boolean checkIfLend(Long bookId) throws EntityManagerException, LendingNotFoundException;
     
-    public LendAndReturn getLendAndReturn(Long bookId);
+    public LendAndReturn getLendAndReturn(Long bookId) throws LendingNotFoundException, EntityManagerException;
     
-    public List<LendAndReturn> getLendAndReturns(Long memberId);
+    public List<LendAndReturn> getLendAndReturns(Long memberId) throws EntityManagerException, LendingsNotFoundException;
     
-    public void returnBook(Long bookId);
+    public void returnBook(Long bookId) throws EntityManagerException, LendingNotFoundException;
     
-    public void returnAllBooks(Long memberId);
+    public void returnAllBooks(Long memberId) throws EntityManagerException, LendingsNotFoundException;
 }

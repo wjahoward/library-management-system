@@ -6,6 +6,7 @@
 # Run the Application
 - Clean and Build `LibraryManagementSystem'
 - Deploy `LibraryManagementSystem'
+- If the second point fails, deploy `LibraryManagementSystem' again
 - Clean and Build `LibraryManagementSystem'
 - Run `LibraryManagementSystem'
 	- A web page with the url `http://localhost:8080/LibraryManagementSystem-war` should be displayed
@@ -16,7 +17,8 @@
 - Responsive Navigation Bar & Pages: Adjusted according to the window size of the screen
 - Return All Books/Pay total fine: Allows the users to return all books/pay total fine in by pressing one button rather than returning the book/paying the fine by pressing the buttons one by one (this comes with the assumption that the user wants to return all books/pay all the fines at one go)
 
-# Note
+# Notes
 - For line 42 of createMember.xhtml, do not format the following code:
 onkeypress="if (event.which &lt; 48 || event.which &gt; 57) return false;"> <!-- do not format this, as it allows user to not key in any alphabets -->
 - "Pay a Total Fine of $.." allows the user to pay the total fine amount and returning all books
+- There are some codes for `private void withinFourteenDays(LendAndReturn lAR)` and `public void addLendAndReturn()` contains the codes to allow testing of dates

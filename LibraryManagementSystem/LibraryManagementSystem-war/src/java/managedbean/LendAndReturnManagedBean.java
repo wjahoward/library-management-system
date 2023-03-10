@@ -9,6 +9,11 @@ import ejb.session.stateless.LendAndReturnSessionBeanLocal;
 import entity.Book;
 import entity.LendAndReturn;
 import entity.Member;
+import exception.BookNotFoundException;
+import exception.EntityManagerException;
+import exception.LendingNotFoundException;
+import exception.LendingsNotFoundException;
+import exception.MemberNotFoundException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -165,11 +170,11 @@ public class LendAndReturnManagedBean implements Serializable {
     public void setNewMember(Member newMember) {
         this.newMember = newMember;
     }
-    
+
     public BigDecimal getTotalFine() {
         return this.totalFine;
     }
-    
+
     public void setTotalFine(BigDecimal totalFine) {
         this.totalFine = totalFine;
     }
@@ -217,32 +222,79 @@ public class LendAndReturnManagedBean implements Serializable {
         return fineAmount.setScale(2, RoundingMode.HALF_UP);
     }
 
-    public void addLendAndReturn() {
+    public String viewMember() {
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
-        Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
-        
-        // testing purpose
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.YEAR, 2023);
-        cal.set(Calendar.MONTH, Calendar.MARCH);
-        cal.set(Calendar.DAY_OF_MONTH, 20);
-        Date ld = cal.getTime();
+        Long mId = Long.parseLong(externalContext.getRequestParameterMap().get("mId"));
+        return "/secret/admin/member/viewMember.xhtml?faces-redirect=true&mId=" + mId;
+    }
 
-        LendAndReturn lAR = new LendAndReturn();
-        lAR.setLendDate(ld);
-//        lAR.setLendDate(new Date());
-        lAR.setReturnDate(null);
-        lAR.setFineAmount(new BigDecimal(0));
+    public boolean checkBookings() {
+        return selectedLendAndReturns == null;
+    }
 
-        Set<ConstraintViolation<LendAndReturn>> constraintViolations = validator.validate(lAR);
+    public String getGender() {
+        return selectedMember.getGender() == 'M' ? "Male" : "Female";
+    }
 
-        if (!constraintViolations.isEmpty()) {
-            displayValidationErrors(constraintViolations);
-            return;
+    public String showFine(BigDecimal fineAmount) {
+        return "Pay a Fine of $" + fineAmount.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public String showTotalFine(BigDecimal fineAmount) {
+        return "Pay a Total Fine of $" + fineAmount.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal getTotalFine(List<LendAndReturn> lendAndReturns) {
+        BigDecimal currentTotalFine = new BigDecimal(0);
+
+        if (lendAndReturns.isEmpty()) {
+            return new BigDecimal(0);
         }
 
-        lendAndReturnSessionBeanLocal.createLendAndReturn(lAR, bId, newMember.getMemberId());
+        for (LendAndReturn lAR : lendAndReturns) {
+            currentTotalFine = currentTotalFine.add(lAR.getFineAmount());
+        }
+
+        this.totalFine = currentTotalFine;
+
+        return currentTotalFine;
+    }
+
+    public void addLendAndReturn() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        try {
+            ExternalContext externalContext = context.getExternalContext();
+            Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
+
+            LendAndReturn lAR = new LendAndReturn();
+            // testing purpose
+//        Calendar cal = Calendar.getInstance();
+//        cal.set(Calendar.YEAR, 2023);
+//        cal.set(Calendar.MONTH, Calendar.MARCH);
+//        cal.set(Calendar.DAY_OF_MONTH, 20);
+//        Date ld = cal.getTime();
+//        lAR.setLendDate(ld);
+            lAR.setLendDate(new Date());
+            lAR.setReturnDate(null);
+            lAR.setFineAmount(new BigDecimal(0));
+
+            Set<ConstraintViolation<LendAndReturn>> constraintViolations = validator.validate(lAR);
+
+            if (!constraintViolations.isEmpty()) {
+                displayValidationErrors(constraintViolations);
+                return;
+            }
+
+            lendAndReturnSessionBeanLocal.createLendAndReturn(lAR, bId, newMember.getMemberId());
+        } catch (EntityManagerException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Entity Manager Error"));
+        } catch (MemberNotFoundException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Member record not found"));
+        } catch (BookNotFoundException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Book record not found"));
+        }
+
     }
 
     private void displayValidationErrors(Set<ConstraintViolation<LendAndReturn>> constraintViolations) {
@@ -254,18 +306,31 @@ public class LendAndReturnManagedBean implements Serializable {
 
     public void returnBook() {
         FacesContext context = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = context.getExternalContext();
-        Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
-
-        lendAndReturnSessionBeanLocal.returnBook(bId);
+        try {
+            ExternalContext externalContext = context.getExternalContext();
+            Long bId = Long.parseLong(externalContext.getRequestParameterMap().get("bId"));
+            
+            lendAndReturnSessionBeanLocal.returnBook(bId);
+        } catch (EntityManagerException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Entity manager error"));
+        } catch (LendingNotFoundException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Lending record not found"));
+        }
     }
-    
+
     public void returnAllBooks() {
         FacesContext context = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = context.getExternalContext();
-        Long mId = Long.parseLong(externalContext.getRequestParameterMap().get("mId"));
+        try {
+            ExternalContext externalContext = context.getExternalContext();
+            Long mId = Long.parseLong(externalContext.getRequestParameterMap().get("mId"));
 
-        lendAndReturnSessionBeanLocal.returnAllBooks(mId);
+            lendAndReturnSessionBeanLocal.returnAllBooks(mId);
+        } catch (EntityManagerException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Entity manager error"));
+        } catch (LendingsNotFoundException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Lending records not found"));
+        }
+
     }
 
     public void updatedSelectedBook() {
@@ -276,8 +341,18 @@ public class LendAndReturnManagedBean implements Serializable {
     }
 
     public String getStatus(String boId) {
-        Long bookId = Long.parseLong(boId);
-        if (lendAndReturnSessionBeanLocal.checkIfLend(bookId)) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        boolean checkIfLend = false;
+        try {
+            Long bookId = Long.parseLong(boId);
+            checkIfLend = lendAndReturnSessionBeanLocal.checkIfLend(bookId);
+        } catch (EntityManagerException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Entity manager error"));
+        } catch (LendingNotFoundException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Lend record not found"));
+        }
+
+        if (checkIfLend) {
             return "Unavailable";
         }
 
@@ -301,8 +376,10 @@ public class LendAndReturnManagedBean implements Serializable {
             fineAmount = this.selectedLendAndReturn.getFineAmount();
             selectedMember = this.selectedLendAndReturn.getMember();
             status = "Unavailable";
-        } catch (Exception e) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unable to load lendAndReturn"));
+        } catch (EntityManagerException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Entity manager error"));
+        } catch (LendingNotFoundException e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Lend record not found"));
         }
     }
 
@@ -314,47 +391,10 @@ public class LendAndReturnManagedBean implements Serializable {
             Long mId = Long.parseLong(externalContext.getRequestParameterMap().get("mId"));
 
             this.selectedLendAndReturns = lendAndReturnSessionBeanLocal.getLendAndReturns(mId);
-        } catch (Exception e) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unable to load lendAndReturn"));
+        } catch (EntityManagerException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Entity manager error"));
+        } catch (LendingsNotFoundException e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Lend records not found"));
         }
-    }
-
-    public String viewMember() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = context.getExternalContext();
-        Long mId = Long.parseLong(externalContext.getRequestParameterMap().get("mId"));
-        return "/secret/admin/member/viewMember.xhtml?faces-redirect=true&mId=" + mId;
-    }
-
-    public boolean checkBookings() {
-        return selectedLendAndReturns == null;
-    }
-
-    public String getGender() {
-        return selectedMember.getGender() == 'M' ? "Male" : "Female";
-    }
-
-    public String showFine(BigDecimal fineAmount) {
-        return "Pay a Fine of $" + fineAmount.setScale(2, RoundingMode.HALF_UP);
-    }
-    
-    public String showTotalFine(BigDecimal fineAmount) {
-        return "Pay a Total Fine of $" + fineAmount.setScale(2, RoundingMode.HALF_UP);
-    }
-    
-    public BigDecimal getTotalFine(List<LendAndReturn> lendAndReturns) {
-        BigDecimal currentTotalFine = new BigDecimal(0);
-        
-        if (lendAndReturns.isEmpty()) {
-            return new BigDecimal(0);
-        }
-        
-        for (LendAndReturn lAR : lendAndReturns) {
-            currentTotalFine = currentTotalFine.add(lAR.getFineAmount());
-        }
-        
-        this.totalFine = currentTotalFine;
-        
-        return currentTotalFine;
     }
 }

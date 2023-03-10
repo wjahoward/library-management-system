@@ -8,17 +8,17 @@ package managedbean;
 import ejb.session.stateless.BookSessionBeanLocal;
 import ejb.session.stateless.LendAndReturnSessionBeanLocal;
 import entity.Book;
-import java.io.InputStream;
+import exception.BookNotFoundException;
+import exception.EntityManagerException;
+import exception.LendingNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 
 /**
  *
@@ -53,21 +53,12 @@ public class BookManagedBean {
 
     @PostConstruct
     public void init() {
-        setBooks(bookSessionBeanLocal.searchBooks());
-    }
-
-    public void loadSelectedBook() {
         FacesContext context = FacesContext.getCurrentInstance();
-
         try {
-            this.selectedBook
-                    = bookSessionBeanLocal.getBook(bId);
-            title = this.selectedBook.getTitle();
-            isbn = this.selectedBook.getIsbn();
-            author = this.selectedBook.getAuthor();
-        } catch (Exception e) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unable to load book"));
-        }
+            setBooks(bookSessionBeanLocal.searchBooks());
+        } catch (EntityManagerException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Entity Manager Error"));
+        }  
     }
 
     public BookSessionBeanLocal getBookSessionBeanLocal() {
@@ -154,13 +145,57 @@ public class BookManagedBean {
 
         return "";
     }
+       
+    public void loadSelectedBook() {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        try {
+            this.selectedBook
+                    = bookSessionBeanLocal.getBook(bId);
+            title = this.selectedBook.getTitle();
+            isbn = this.selectedBook.getIsbn();
+            author = this.selectedBook.getAuthor();
+        } catch (EntityManagerException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Entity Manager Error"));
+        } catch (BookNotFoundException e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Book record not found"));
+        } 
+    }
 
     public List<Book> getFilteredBooks() {
+        List<Book> filteredBooks = new ArrayList<>();
+        FacesContext context = FacesContext.getCurrentInstance();
+        
         switch (filter) {
             case "Unavailable":
-                return books.stream().filter(b -> lendAndReturnSessionBeanLocal.checkIfLend(b.getBookId())).collect(Collectors.toList());
+                for (Book book : books) {
+                    try {
+                        if (lendAndReturnSessionBeanLocal.checkIfLend(book.getBookId())) {
+                            filteredBooks.add(book);
+                        }
+                    } catch (EntityManagerException ex) {
+                         context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Entity Manager Error"));
+                    } catch (LendingNotFoundException ex) {
+                         context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Lending record not found"));
+                    }
+                }
+                
+                return filteredBooks;
             case "Available":
-                return books.stream().filter(b -> !lendAndReturnSessionBeanLocal.checkIfLend(b.getBookId())).collect(Collectors.toList());
+                for (Book book : books) {
+                    try {
+                        if (lendAndReturnSessionBeanLocal.checkIfLend(book.getBookId())) {
+                            filteredBooks.add(book);
+                        }
+                    } catch (EntityManagerException ex) {
+                        // Handle the exception here
+                         context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Entity Manager Error"));
+                    } catch (LendingNotFoundException ex) {
+                         context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Lending record not found"));
+                    }
+                }
+                
+               return filteredBooks;
             default:
                 return books; // show all books
         }

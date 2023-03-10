@@ -7,6 +7,8 @@ package managedbean;
 
 import ejb.session.stateless.MemberSessionBeanLocal;
 import entity.Member;
+import exception.EntityManagerException;
+import exception.MemberNotFoundException;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.PostConstruct;
@@ -42,7 +44,7 @@ public class MemberManagedBean {
     private long mId;
     private List<Member> members;
     private Member selectedMember;
-    
+
     // validation
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -57,7 +59,12 @@ public class MemberManagedBean {
 
     @PostConstruct
     public void init() {
-        setMembers(memberSessionBeanLocal.searchMembers());
+        FacesContext context = FacesContext.getCurrentInstance();
+        try {
+            setMembers(memberSessionBeanLocal.searchMembers());
+        } catch (EntityManagerException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Entity manager error"));
+        }
     }
 
     public MemberSessionBeanLocal getMemberSessionBeanLocal() {
@@ -147,25 +154,32 @@ public class MemberManagedBean {
     public void setmId(long mId) {
         this.mId = mId;
     }
-    
-    public void addMember() {
-        Member m = new Member();        
-        m.setFirstName(firstName);
-        m.setLastName(lastName);
-        m.setGender(gender);
-        m.setAge(age);
-        m.setIdentityNo(identityNo);
-        m.setPhone(phone);
-        m.setAddress(address);
-        
-        Set<ConstraintViolation<Member>> constraintViolations = validator.validate(m);
 
-        if (!constraintViolations.isEmpty()) {
-            displayValidationErrors(constraintViolations);
-            return;
+    public void addMember() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        
+        try {
+            Member m = new Member();
+            m.setFirstName(firstName);
+            m.setLastName(lastName);
+            m.setGender(gender);
+            m.setAge(age);
+            m.setIdentityNo(identityNo);
+            m.setPhone(phone);
+            m.setAddress(address);
+
+            Set<ConstraintViolation<Member>> constraintViolations = validator.validate(m);
+
+            if (!constraintViolations.isEmpty()) {
+                displayValidationErrors(constraintViolations);
+                return;
+            }
+
+            memberSessionBeanLocal.createNewMember(m);
+        } catch (EntityManagerException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Entity manager error"));
         }
 
-        memberSessionBeanLocal.createNewMember(m);
     }
 
     private void displayValidationErrors(Set<ConstraintViolation<Member>> constraintViolations) {
@@ -174,7 +188,7 @@ public class MemberManagedBean {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Backend Validation Error", violation.getMessage()));
         }
     }
-    
+
     public void loadSelectedMember() {
         FacesContext context = FacesContext.getCurrentInstance();
 
@@ -188,8 +202,10 @@ public class MemberManagedBean {
             gender = this.selectedMember.getGender();
             identityNo = this.selectedMember.getIdentityNo();
             phone = this.selectedMember.getPhone();
-        } catch (Exception e) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unable to load member"));
+        } catch (EntityManagerException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Entity manager error"));
+        } catch (MemberNotFoundException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Member record not found"));
         }
     }
 }

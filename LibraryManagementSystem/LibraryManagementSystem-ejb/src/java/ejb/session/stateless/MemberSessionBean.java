@@ -38,16 +38,16 @@ public class MemberSessionBean implements MemberSessionBeanLocal {
     }
 
     @Override
-    public Member find(Long mId) {
+    public Member getMember(Long mId) {
         Member m = em.find(Member.class, mId);
         return m;
     }
     
-    @Override
-    public Member getMember(Long mId) {
-        Query query = em.createQuery("SELECT m FROM Member m WHERE m.memberId = :inMId");
-        query.setParameter("inMId", mId);
-        return (Member) query.getSingleResult();
-    }
+//    @Override
+//    public Member getMember(Long mId) {
+//        Query query = em.createQuery("SELECT m FROM Member m WHERE m.memberId = :inMId");
+//        query.setParameter("inMId", mId);
+//        return (Member) query.getSingleResult();
+//    }
 
 }

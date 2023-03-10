@@ -7,6 +7,7 @@ package managedbean;
 
 import ejb.session.stateless.StaffSessionBeanLocal;
 import entity.Staff;
+import exception.EntityManagerException;
 import exception.StaffNotFoundException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -77,6 +78,8 @@ public class StaffManagedBean implements Serializable {
             } else {
                 message = new FacesMessage(FacesMessage.SEVERITY_ERROR, LOGIN_ERROR, INVALID_CREDENTIALS);
             }
+        } catch (EntityManagerException e) {
+            message = new FacesMessage(FacesMessage.SEVERITY_ERROR, LOGIN_ERROR, "Entity manager error");
         } catch (StaffNotFoundException e) {
             message = new FacesMessage(FacesMessage.SEVERITY_ERROR, LOGIN_ERROR, INVALID_CREDENTIALS);
         }

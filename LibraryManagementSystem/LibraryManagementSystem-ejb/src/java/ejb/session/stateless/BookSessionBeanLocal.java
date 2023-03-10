@@ -6,6 +6,8 @@
 package ejb.session.stateless;
 
 import entity.Book;
+import exception.BookNotFoundException;
+import exception.EntityManagerException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -15,9 +17,9 @@ import javax.ejb.Local;
  */
 @Local
 public interface BookSessionBeanLocal {
-    public void createNewBook(Book b);
+    public void createNewBook(Book b) throws EntityManagerException;
     
-    public List<Book> searchBooks();
+    public List<Book> searchBooks() throws EntityManagerException;
     
-    public Book getBook(long bId);
+    public Book getBook(long bId) throws EntityManagerException, BookNotFoundException;
 }
